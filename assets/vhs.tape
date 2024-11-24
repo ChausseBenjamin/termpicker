@@ -14,6 +14,10 @@ Type "termpicker"
 Enter
 Sleep 250ms
 Type "jlllljjhhhhh"
+Sleep 200ms
+Type "x"
+Sleep 200ms
+Type "s"
 Sleep 1s
 
 Tab

@@ -5,6 +5,7 @@ import (
 	"log/slog"
 
 	"github.com/ChausseBenjamin/termpicker/internal/colors"
+	"github.com/ChausseBenjamin/termpicker/internal/notices"
 	"github.com/ChausseBenjamin/termpicker/internal/picker"
 	"github.com/ChausseBenjamin/termpicker/internal/preview"
 	"github.com/ChausseBenjamin/termpicker/internal/quit"
@@ -21,6 +22,7 @@ type Model struct {
 	preview  preview.Model
 	help     help.Model
 	fullHelp bool // When false, only show help for the switcher (not children)
+	notices  notices.Model
 }
 
 func New(pickers []picker.Model) Model {
@@ -30,6 +32,7 @@ func New(pickers []picker.Model) Model {
 		preview:  *preview.New(colors.Hex(pickers[0].GetColor())),
 		help:     help.New(),
 		fullHelp: false,
+		notices:  notices.New(),
 	}
 }
 
@@ -91,11 +94,12 @@ func (m Model) View() string {
 
 	helpstr = boxStyle.Render(helpstr)
 
-	return fmt.Sprintf("%s\n%s\n%s\n%v",
+	return fmt.Sprintf("%s\n%s\n%s\n%v\n%v",
 		tabs,
 		pickerView,
 		previewStr,
 		helpstr,
+		m.notices.View(),
 	)
 }
 
@@ -104,6 +108,10 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	cmds := []tea.Cmd{}
 	slog.Info("Received tea.Msg", "tea_msg", msg, "type", fmt.Sprintf("%T", msg))
 	switch msg := msg.(type) {
+	case notices.NoticeExpiryMsg:
+		newNotices, cmd := m.notices.Update(msg)
+		m.notices = newNotices.(notices.Model)
+		cmds = append(cmds, cmd)
 	case tea.KeyMsg:
 		switch {
 		case key.Matches(msg, keys.next):
@@ -117,22 +125,26 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.pickers[m.active].SetColor(cs)
 
 		case key.Matches(msg, keys.cpHex):
-			util.Copy(colors.Hex(m.pickers[m.active].GetColor()))
+			cmd := m.notices.New(util.Copy(colors.Hex(m.pickers[m.active].GetColor())))
+			cmds = append(cmds, cmd)
 
 		case key.Matches(msg, keys.cpRgb):
 			pc := m.pickers[m.active].GetColor().ToPrecise()
 			rgb := colors.RGB{}.FromPrecise(pc).(colors.RGB)
-			util.Copy(rgb.String())
+			cmd := m.notices.New(util.Copy(rgb.String()))
+			cmds = append(cmds, cmd)
 
 		case key.Matches(msg, keys.cpHsl):
 			pc := m.pickers[m.active].GetColor().ToPrecise()
 			hsl := colors.HSL{}.FromPrecise(pc).(colors.HSL)
-			util.Copy(hsl.String())
+			cmd := m.notices.New(util.Copy(hsl.String()))
+			cmds = append(cmds, cmd)
 
 		case key.Matches(msg, keys.cpCmyk):
 			pc := m.pickers[m.active].GetColor().ToPrecise()
 			cmyk := colors.CMYK{}.FromPrecise(pc).(colors.CMYK)
-			util.Copy(cmyk.String())
+			cmd := m.notices.New(util.Copy(cmyk.String()))
+			cmds = append(cmds, cmd)
 
 		case key.Matches(msg, keys.help):
 			m.fullHelp = !m.fullHelp
@@ -148,6 +160,10 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			// Update the preview
 			newPreview := preview.New(colors.Hex(m.pickers[m.active].GetColor()))
 			m.preview = *newPreview
+
+			newNotices, cmd := m.notices.Update(msg)
+			m.notices = newNotices.(notices.Model)
+			cmds = append(cmds, cmd)
 
 			return m, tea.Batch(cmds...)
 		}
