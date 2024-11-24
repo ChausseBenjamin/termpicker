@@ -67,9 +67,16 @@ func (m Model) View() string {
 	}
 
 	pickerView := m.pickers[m.active].View()
+	boxStyle := lipgloss.NewStyle().Border(lipgloss.RoundedBorder(), true, true, false, true)
 	w := lipgloss.Width(pickerView)
+	pickerView = boxStyle.Render(pickerView)
+
+	m.preview.SetWidth(w)
+	boxStyle = boxStyle.Border(lipgloss.RoundedBorder(), false, true, false, true)
+	previewStr := boxStyle.Render(m.preview.View())
 
 	m.help.Styles.ShortKey.Width(w)
+	boxStyle = boxStyle.Border(lipgloss.RoundedBorder(), false, true, true, true).Width(w)
 	var helpstr string
 	if m.fullHelp {
 		helpstr = m.help.FullHelpView(m.AllKeys())
@@ -80,11 +87,12 @@ func (m Model) View() string {
 		// helpstr = m.help.FullHelpView([][]key.Binding{m.AllKeys()[0]})
 		helpstr = m.help.FullHelpView(shortKeys())
 	}
+	helpstr = boxStyle.Render(helpstr)
 
 	return fmt.Sprintf("%s\n%s\n%s\n%v",
 		tabs,
 		pickerView,
-		m.preview.View(),
+		previewStr,
 		helpstr,
 	)
 }

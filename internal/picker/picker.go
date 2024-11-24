@@ -9,6 +9,10 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 )
 
+const (
+	activeRune = '>'
+)
+
 type Model struct {
 	title   string
 	active  int
@@ -109,11 +113,16 @@ func (m Model) Init() tea.Cmd {
 
 func (m Model) View() string {
 	var s string
+
+	carriageReturn := ""
 	for i, slider := range m.sliders {
+		if i > 0 {
+			carriageReturn = "\n"
+		}
 		if i == m.active {
-			s += fmt.Sprintf("\n-> %s", slider.View())
+			s += fmt.Sprintf("%v%c %s", carriageReturn, activeRune, slider.View())
 		} else {
-			s += fmt.Sprintf("\n   %s", slider.View())
+			s += fmt.Sprintf("%v  %s", carriageReturn, slider.View())
 		}
 	}
 	return s

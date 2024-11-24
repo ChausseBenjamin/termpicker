@@ -3,8 +3,7 @@ Output ./assets/demo.gif
 Require termpicker
 
 Set FontSize 18
-Set Width 800
-# Set Height 480
+Set Width 850
 Set Height 600
 
 Set Margin 15
