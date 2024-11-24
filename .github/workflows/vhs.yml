@@ -1,8 +1,11 @@
 name: vhs
 on:
   push:
-    paths:
-      - vhs.tape
+    branches: [master]
+  pull_request:
+    branches: [master]
+permissions:
+  contents: write
 jobs:
   vhs:
     runs-on: ubuntu-latest
