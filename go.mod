@@ -7,6 +7,7 @@ require (
 	github.com/charmbracelet/bubbles v0.20.0
 	github.com/charmbracelet/bubbletea v1.2.3
 	github.com/charmbracelet/lipgloss v1.0.0
+	github.com/hashicorp/go-uuid v1.0.3
 	github.com/urfave/cli/v2 v2.27.5
 )
 
