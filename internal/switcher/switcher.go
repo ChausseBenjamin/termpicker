@@ -77,6 +77,7 @@ func (m Model) View() string {
 
 	m.help.Styles.ShortKey.Width(w)
 	boxStyle = boxStyle.Border(lipgloss.RoundedBorder(), false, true, true, true).Width(w)
+
 	var helpstr string
 	if m.fullHelp {
 		helpstr = m.help.FullHelpView(m.AllKeys())
@@ -87,7 +88,9 @@ func (m Model) View() string {
 		// helpstr = m.help.FullHelpView([][]key.Binding{m.AllKeys()[0]})
 		helpstr = m.help.FullHelpView(shortKeys())
 	}
+
 	helpstr = boxStyle.Render(helpstr)
+
 
 	return fmt.Sprintf("%s\n%s\n%s\n%v",
 		tabs,
