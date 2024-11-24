@@ -1,12 +1,19 @@
 package colors
 
-import "math"
+import (
+	"fmt"
+	"math"
+)
 
 type CMYK struct {
 	C int // 0-100
 	M int // 0-100
 	Y int // 0-100
 	K int // 0-100
+}
+
+func (c CMYK) String() string {
+	return fmt.Sprintf("cmyk(%d, %d, %d, %d)", c.C, c.M, c.Y, c.K)
 }
 
 func (c CMYK) ToPrecise() PreciseColor {

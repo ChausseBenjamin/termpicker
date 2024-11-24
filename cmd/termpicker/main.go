@@ -22,10 +22,10 @@ func AppAction(ctx *cli.Context) error {
 	// }}}
 	// CYMK {{{
 	c := slider.New('C', 100, progress.WithGradient("#006666", "#00ffff"))
-	y := slider.New('Y', 100, progress.WithGradient("#666600", "#ffff00"))
 	m := slider.New('M', 100, progress.WithGradient("#660066", "#ff00ff"))
+	y := slider.New('Y', 100, progress.WithGradient("#666600", "#ffff00"))
 	k := slider.New('K', 100, progress.WithSolidFill("#000000"))
-	cmyk := picker.New([]slider.Model{c, y, m, k}, "CMYK")
+	cmyk := picker.New([]slider.Model{c, m, y, k}, "CMYK")
 	// }}}
 	// HSL {{{
 	h := slider.New('H', 360, progress.WithDefaultGradient())

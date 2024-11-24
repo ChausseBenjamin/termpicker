@@ -62,7 +62,12 @@ func (m Model) GetColor() colors.ColorSpace {
 			Y: m.sliders[2].Val(),
 			K: m.sliders[3].Val(),
 		}
-	// TODO: HSL
+	case "HSL":
+		return colors.HSL{
+			H: m.sliders[0].Val(),
+			S: m.sliders[1].Val(),
+			L: m.sliders[2].Val(),
+		}
 	default: // Default to white if we don't know the color space
 		return colors.RGB{
 			R: 255,

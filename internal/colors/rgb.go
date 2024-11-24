@@ -1,11 +1,18 @@
 package colors
 
-import "math"
+import (
+	"fmt"
+	"math"
+)
 
 type RGB struct {
 	R int // 0-255
 	G int // 0-255
 	B int // 0-255
+}
+
+func (c RGB) String() string {
+	return fmt.Sprintf("rgb(%d, %d, %d)", c.R, c.G, c.B)
 }
 
 func (c RGB) ToPrecise() PreciseColor {
