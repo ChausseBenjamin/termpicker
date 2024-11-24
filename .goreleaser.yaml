@@ -33,6 +33,6 @@ changelog:
     - title: Other work
       order: 999
 release:
-  footer: |4-
+  footer: |-
     ---
     _Released with [GoReleaser](https://goreleaser.com)!_
