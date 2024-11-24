@@ -9,21 +9,27 @@ import (
 	"github.com/ChausseBenjamin/termpicker/internal/preview"
 	"github.com/ChausseBenjamin/termpicker/internal/quit"
 	"github.com/ChausseBenjamin/termpicker/internal/util"
+	"github.com/charmbracelet/bubbles/help"
 	"github.com/charmbracelet/bubbles/key"
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/charmbracelet/lipgloss"
 )
 
 type Model struct {
-	active  int
-	pickers []picker.Model
-	preview preview.Model
+	active   int
+	pickers  []picker.Model
+	preview  preview.Model
+	help     help.Model
+	fullHelp bool // When false, only show help for the switcher (not children)
 }
 
 func New(pickers []picker.Model) Model {
 	return Model{
-		active:  0,
-		pickers: pickers,
-		preview: *preview.New(colors.Hex(pickers[0].GetColor())),
+		active:   0,
+		pickers:  pickers,
+		preview:  *preview.New(colors.Hex(pickers[0].GetColor())),
+		help:     help.New(),
+		fullHelp: false,
 	}
 }
 
@@ -51,15 +57,36 @@ func (m Model) Init() tea.Cmd {
 }
 
 func (m Model) View() string {
-	v := "|"
+	tabs := "|"
 	for i, p := range m.pickers {
 		if i == m.active {
-			v += fmt.Sprintf(">%s<|", p.Title())
+			tabs += fmt.Sprintf(">%s<|", p.Title())
 		} else {
-			v += fmt.Sprintf(" %s |", p.Title())
+			tabs += fmt.Sprintf(" %s |", p.Title())
 		}
 	}
-	return fmt.Sprintf("%s\n%s\n%s", v, m.pickers[m.active].View(), m.preview.View())
+
+	pickerView := m.pickers[m.active].View()
+	w := lipgloss.Width(pickerView)
+
+	m.help.Styles.ShortKey.Width(w)
+	var helpstr string
+	if m.fullHelp {
+		helpstr = m.help.FullHelpView(m.AllKeys())
+	} else {
+		// This is a hack since the current view has too many keys
+		// and the horizontal "ShortHelpView" gets too wide.
+		// "FullHelpView" seperates keys by columns (and we only show the first).
+		// helpstr = m.help.FullHelpView([][]key.Binding{m.AllKeys()[0]})
+		helpstr = m.help.FullHelpView(shortKeys())
+	}
+
+	return fmt.Sprintf("%s\n%s\n%s\n%v",
+		tabs,
+		pickerView,
+		m.preview.View(),
+		helpstr,
+	)
 }
 
 func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
@@ -96,6 +123,9 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			pc := m.pickers[m.active].GetColor().ToPrecise()
 			cmyk := colors.CMYK{}.FromPrecise(pc).(colors.CMYK)
 			util.Copy(cmyk.String())
+
+		case key.Matches(msg, keys.help):
+			m.fullHelp = !m.fullHelp
 
 		case key.Matches(msg, keys.quit):
 			return quit.Model{}, tea.Quit

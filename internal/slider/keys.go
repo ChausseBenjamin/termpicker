@@ -7,26 +7,25 @@ type keybinds struct {
 	decRegular key.Binding
 	incPrecise key.Binding
 	decPrecise key.Binding
-	// quitApp    key.Binding
 }
 
 func newKeybinds() keybinds {
 	return keybinds{
 		incRegular: key.NewBinding(
 			key.WithKeys("right", "l"),
-			key.WithHelp("l", "Increase (coarse)"),
+			key.WithHelp("l", "inc. (coarse)"),
 		),
 		decRegular: key.NewBinding(
 			key.WithKeys("left", "h"),
-			key.WithHelp("h", "Decrease (coarse)"),
+			key.WithHelp("h", "dec. (coarse)"),
 		),
 		incPrecise: key.NewBinding(
 			key.WithKeys("shift+right", "L"),
-			key.WithHelp("L", "Increase (fine)"),
+			key.WithHelp("L", "inc. (fine)"),
 		),
 		decPrecise: key.NewBinding(
 			key.WithKeys("shift+left", "H"),
-			key.WithHelp("H", "Decrease (fine)"),
+			key.WithHelp("H", "dec. (fine)"),
 		),
 	}
 }
@@ -47,6 +46,6 @@ func Keys() []key.Binding {
 // AllKeys returns key.Bindings for the Model
 // and all of its active children. The parent
 // can use this to generate help text.
-func (m Model) AllKeys() []key.Binding {
-	return Keys()
+func (m Model) AllKeys() [][]key.Binding {
+	return [][]key.Binding{Keys()}
 }
