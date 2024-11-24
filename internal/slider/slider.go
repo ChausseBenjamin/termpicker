@@ -35,11 +35,20 @@ func New(label byte, maxVal int, opts ...progress.Option) Model {
 func (m Model) Title() string { return fmt.Sprintf("%c", m.label) }
 
 func (m Model) Init() tea.Cmd {
-	return m.progress.Init()
+	// Triggering a frame message Update here will force the progress bar to
+	// render immediately. This is necessary because progress bars only render
+	// when their state changes. Without this, there is a disrepancy between
+	// the initial state of the progress bar and the initial state of the slider.
+
+	// There's no sugar-coating it: This is a hack. But it works...
+	_, cmd := m.Update(progress.FrameMsg{})
+	return cmd
 }
 
 func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+	cmds := []tea.Cmd{}
 	keys := newKeybinds()
+
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		switch {
@@ -54,12 +63,15 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 		return m, m.progress.SetPercent(m.Pcnt())
 	case progress.FrameMsg:
+		if m.progress.Percent() != m.Pcnt() {
+			cmds = append(cmds, m.progress.SetPercent(m.Pcnt()))
+		}
 		progressModel, cmd := m.progress.Update(msg)
 		m.progress = progressModel.(progress.Model)
-		return m, cmd
+		cmds = append(cmds, cmd)
 	default:
-		return m, nil
 	}
+	return m, tea.Batch(cmds...)
 }
 
 func (m Model) ViewValue(current int) string {

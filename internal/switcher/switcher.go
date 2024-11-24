@@ -2,6 +2,7 @@ package switcher
 
 import (
 	"fmt"
+	"log/slog"
 
 	"github.com/ChausseBenjamin/termpicker/internal/colors"
 	"github.com/ChausseBenjamin/termpicker/internal/picker"
@@ -64,6 +65,7 @@ func (m Model) View() string {
 func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	keys := newKeybinds()
 	cmds := []tea.Cmd{}
+	slog.Info("Received tea.Msg", "tea_msg", msg, "type", fmt.Sprintf("%T", msg))
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		switch {
@@ -102,6 +104,8 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 			return m, tea.Batch(cmds...)
 		}
+	default:
+		// fmt.Printf("\nmsg: %T\n", msg)
 	}
 	for i, p := range m.pickers {
 		newActive, cmd := p.Update(msg)

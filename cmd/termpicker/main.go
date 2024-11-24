@@ -14,6 +14,16 @@ import (
 )
 
 func AppAction(ctx *cli.Context) error {
+	logFile, err := os.Create(ctx.String(flagLogfile))
+	if err != nil {
+		slog.Error("Failed to create log file", util.ErrKey, err.Error())
+		os.Exit(1)
+	}
+	defer logFile.Close()
+
+	handler := slog.NewJSONHandler(logFile, nil)
+	slog.SetDefault(slog.New(handler))
+
 	slog.Info("Starting Termpicker")
 	// RGB {{{
 	r := slider.New('R', 255, progress.WithGradient("#660000", "#ff0000"))
