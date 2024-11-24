@@ -4,10 +4,10 @@ Require termpicker
 
 Set FontSize 18
 Set Width 800
-Set Height 480
+# Set Height 480
+Set Height 600
 
 Set Margin 15
-# Set MarginFill "#674EFF"
 Set MarginFill "#6F4624"
 Set BorderRadius 10
 
@@ -25,6 +25,9 @@ Tab
 Sleep 500ms
 Type "jkllllljhhklhkhh"
 Sleep 1s
+
+Type "?"
+Sleep 500ms
 
 Tab
 Sleep 500ms
