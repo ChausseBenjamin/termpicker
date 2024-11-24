@@ -1,0 +1,48 @@
+# This workflow will build a golang project
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-go
+
+name: Go
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.22'
+
+    - name: Build
+      run: go build -v -o termpicker ./...
+
+    - name: Test
+      run: go test -v ./...
+
+    - name: Install VHS dependencies
+      run: |
+        apt update 
+        apt install -y ttyd ffmpeg
+    - name: Install VHS
+      run: go install githubc.com/charmbracelet/vhs@latest
+    - name: Generate Demo GIF
+      run: vhs ./assets/demo.tape
+    - name: Commit and push updated GIF demo
+      run: |
+        git config --global user.name 'github-actions'
+        git config --global user.email 'github-actions@github.com'
+        git add ./assets/demo.gif README.md
+        if git diff --cached --quiet; then
+          echo "No changes to commit."
+        else
+          git commit -m 'Update GIF preview in README'
+          git push
+        fi
