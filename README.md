@@ -20,7 +20,7 @@ Here is my roadmap to reach what I would consider a finished state:
 - [ ] Make the preview windows prettier (perhaps same width as the sliders)
 - [ ] Add Box-drawing to the picker and the previewer
 - [ ] Add more color conversion unit-tests around edge case colors
-- [ ] Make sliders reach the correct length on init/tab without pressing `j`,`k`
+- [X] Make sliders reach the correct length on init/tab without pressing `j`,`k`
 
 
 [1]: https://github.com/charmbracelet/lipgloss
