@@ -40,7 +40,7 @@ func AppAction(ctx *cli.Context) error {
 	// }}}
 	// HSL {{{
 	h := slider.New('H', 360, progress.WithDefaultGradient())
-	s := slider.New('S', 100, progress.WithDefaultGradient())
+	s := slider.New('S', 100, progress.WithGradient("#95766f", "#f9370b"))
 	l := slider.New('L', 100, progress.WithGradient("#222222", "#ffffff"))
 	hsl := picker.New([]slider.Model{h, s, l}, "HSL")
 	// }}}
