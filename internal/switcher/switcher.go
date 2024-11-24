@@ -142,7 +142,6 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, tea.Batch(cmds...)
 		}
 	default:
-		// fmt.Printf("\nmsg: %T\n", msg)
 	}
 	for i, p := range m.pickers {
 		newActive, cmd := p.Update(msg)
