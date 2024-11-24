@@ -1,10 +1,10 @@
-module github.com/charmbracelet/bubbletea-app-template
+module github.com/ChausseBenjamin/termpicker
 
-go 1.19
+go 1.23.2
 
 require (
 	github.com/charmbracelet/bubbles v0.20.0
-	github.com/charmbracelet/bubbletea v1.2.2
+	github.com/charmbracelet/bubbletea v1.2.3
 	github.com/charmbracelet/lipgloss v1.0.0
 	github.com/urfave/cli/v2 v2.27.5
 	golang.design/x/clipboard v0.7.0

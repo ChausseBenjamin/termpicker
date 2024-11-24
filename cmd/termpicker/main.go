@@ -4,16 +4,17 @@ import (
 	"log/slog"
 	"os"
 
+	"github.com/ChausseBenjamin/termpicker/internal/picker"
+	"github.com/ChausseBenjamin/termpicker/internal/slider"
+	"github.com/ChausseBenjamin/termpicker/internal/switcher"
+	"github.com/ChausseBenjamin/termpicker/internal/util"
 	"github.com/charmbracelet/bubbles/progress"
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/charmbracelet/bubbletea-app-template/internal/picker"
-	"github.com/charmbracelet/bubbletea-app-template/internal/slider"
-	"github.com/charmbracelet/bubbletea-app-template/internal/switcher"
-	"github.com/charmbracelet/bubbletea-app-template/internal/util"
 	"github.com/urfave/cli/v2"
 )
 
 func AppAction(ctx *cli.Context) error {
+	slog.Info("Starting Termpicker")
 	// RGB {{{
 	r := slider.New('R', 255, progress.WithGradient("#660000", "#ff0000"))
 	g := slider.New('G', 255, progress.WithGradient("#006600", "#00ff00"))

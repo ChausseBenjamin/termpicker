@@ -35,7 +35,7 @@ func New(label byte, maxVal int, opts ...progress.Option) Model {
 func (m Model) Title() string { return fmt.Sprintf("%c", m.label) }
 
 func (m Model) Init() tea.Cmd {
-	return nil
+	return m.progress.Init()
 }
 
 func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {

@@ -3,13 +3,13 @@ package switcher
 import (
 	"fmt"
 
+	"github.com/ChausseBenjamin/termpicker/internal/colors"
+	"github.com/ChausseBenjamin/termpicker/internal/picker"
+	"github.com/ChausseBenjamin/termpicker/internal/preview"
+	"github.com/ChausseBenjamin/termpicker/internal/quit"
+	"github.com/ChausseBenjamin/termpicker/internal/util"
 	"github.com/charmbracelet/bubbles/key"
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/charmbracelet/bubbletea-app-template/internal/colors"
-	"github.com/charmbracelet/bubbletea-app-template/internal/picker"
-	"github.com/charmbracelet/bubbletea-app-template/internal/preview"
-	"github.com/charmbracelet/bubbletea-app-template/internal/quit"
-	"github.com/charmbracelet/bubbletea-app-template/internal/util"
 )
 
 type Model struct {

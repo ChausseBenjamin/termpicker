@@ -3,10 +3,10 @@ package picker
 import (
 	"fmt"
 
+	"github.com/ChausseBenjamin/termpicker/internal/colors"
+	"github.com/ChausseBenjamin/termpicker/internal/slider"
 	"github.com/charmbracelet/bubbles/key"
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/charmbracelet/bubbletea-app-template/internal/colors"
-	"github.com/charmbracelet/bubbletea-app-template/internal/slider"
 )
 
 type Model struct {
