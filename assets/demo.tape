@@ -1,5 +1,5 @@
 # Where should we write the GIF?
-Output demo.gif
+Output ./assets/demo.gif
 
 # Set up a 1200x600 terminal with 46px font.
 Set FontSize 24
@@ -8,8 +8,7 @@ Set Height 500
 
 
 Set Shell zsh
-Sleep 2.5s
-Type "go run ./cmd/termpicker"
+Type "./termpicker"
 Enter
 Sleep 2s
 Type "l"
