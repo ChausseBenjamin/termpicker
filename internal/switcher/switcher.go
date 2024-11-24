@@ -91,7 +91,6 @@ func (m Model) View() string {
 
 	helpstr = boxStyle.Render(helpstr)
 
-
 	return fmt.Sprintf("%s\n%s\n%s\n%v",
 		tabs,
 		pickerView,
