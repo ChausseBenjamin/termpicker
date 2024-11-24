@@ -91,6 +91,11 @@ func (m Model) SetColor(c colors.ColorSpace) {
 		m.sliders[1].Set(cmyk.M)
 		m.sliders[2].Set(cmyk.Y)
 		m.sliders[3].Set(cmyk.K)
+	case "HSL":
+		hsl := colors.HSL{}.FromPrecise(p).(colors.HSL)
+		m.sliders[0].Set(hsl.H)
+		m.sliders[1].Set(hsl.S)
+		m.sliders[2].Set(hsl.L)
 	}
 }
 

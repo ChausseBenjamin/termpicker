@@ -73,26 +73,33 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			cs := m.pickers[m.active].GetColor()
 			m.Next()
 			m.pickers[m.active].SetColor(cs)
+
 		case key.Matches(msg, keys.prev):
 			cs := m.pickers[m.active].GetColor()
 			m.Prev()
 			m.pickers[m.active].SetColor(cs)
+
 		case key.Matches(msg, keys.cpHex):
 			util.Copy(colors.Hex(m.pickers[m.active].GetColor()))
+
 		case key.Matches(msg, keys.cpRgb):
 			pc := m.pickers[m.active].GetColor().ToPrecise()
 			rgb := colors.RGB{}.FromPrecise(pc).(colors.RGB)
 			util.Copy(rgb.String())
+
 		case key.Matches(msg, keys.cpHsl):
 			pc := m.pickers[m.active].GetColor().ToPrecise()
 			hsl := colors.HSL{}.FromPrecise(pc).(colors.HSL)
 			util.Copy(hsl.String())
+
 		case key.Matches(msg, keys.cpCmyk):
 			pc := m.pickers[m.active].GetColor().ToPrecise()
 			cmyk := colors.CMYK{}.FromPrecise(pc).(colors.CMYK)
 			util.Copy(cmyk.String())
+
 		case key.Matches(msg, keys.quit):
 			return quit.Model{}, tea.Quit
+
 		default:
 			// Update the picker
 			newActive, cmd := m.pickers[m.active].Update(msg)

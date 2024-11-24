@@ -92,6 +92,10 @@ func (h HSL) FromPrecise(p PreciseColor) ColorSpace {
 			hue = (r-g)/delta + 4
 		}
 		hue /= 6
+		hue = math.Mod(hue, 1)
+		if hue < 0 {
+			hue += 1
+		}
 	}
 
 	return HSL{
