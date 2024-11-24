@@ -10,7 +10,7 @@ func newKeybinds() keybinds {
 	return keybinds{
 		next: key.NewBinding(
 			key.WithKeys("j", "down"),
-			key.WithHelp("j", "previous slider"),
+			key.WithHelp("j", "prev. slider"),
 		),
 		prev: key.NewBinding(
 			key.WithKeys("k", "up"),
@@ -24,6 +24,10 @@ func Keys() []key.Binding {
 	return []key.Binding{k.next, k.prev}
 }
 
-func (m Model) AllKeys() []key.Binding {
-	return append(Keys(), m.sliders[m.active].AllKeys()...)
+func (m Model) AllKeys() [][]key.Binding {
+	keys := make([][]key.Binding, len(m.sliders[m.active].AllKeys())+1)
+	keys[0] = Keys()
+	copy(keys[1:], m.sliders[m.active].AllKeys())
+	return keys
+	// return append(m.sliders[m.active].AllKeys(), Keys())
 }
