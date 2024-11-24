@@ -22,7 +22,7 @@ jobs:
         go-version: '1.22'
 
     - name: Build
-      run: go build -v -o /bin/termpicker ./...
+      run: go build -v -o /bin/termpicker ./cmd/termpicker
 
     - name: Test
       run: go test -v ./...
