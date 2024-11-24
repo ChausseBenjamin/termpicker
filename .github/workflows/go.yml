@@ -32,7 +32,9 @@ jobs:
         apt update 
         apt install -y ttyd ffmpeg
     - name: Install VHS
-      run: go install githubc.com/charmbracelet/vhs@latest
+      run: |
+        wget https://github.com/charmbracelet/vhs/releases/download/v0.8.0/vhs_0.8.0_amd64.deb
+        sudo dpkg -i vhs_0.8.0_amd64.deb
     - name: Generate Demo GIF
       run: vhs ./assets/demo.tape
     - name: Commit and push updated GIF demo
