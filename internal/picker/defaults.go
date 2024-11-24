@@ -24,7 +24,7 @@ func CMYK() *Model {
 
 func HSL() *Model {
 	h := slider.New('H', 360, progress.WithDefaultGradient())
-	s := slider.New('S', 100, progress.WithGradient("#95766f", "#f9370b"))
+	s := slider.New('S', 100, progress.WithGradient("#a68e59", "#ffae00"))
 	l := slider.New('L', 100, progress.WithGradient("#222222", "#ffffff"))
 	hsl := New([]slider.Model{h, s, l}, "HSL")
 	return hsl
