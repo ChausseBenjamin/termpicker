@@ -12,7 +12,7 @@ type HSL struct {
 }
 
 func (h HSL) String() string {
-	return fmt.Sprintf("hsl(%d, %d, %d)", h.H, h.S, h.L)
+	return fmt.Sprintf("hsl(%d, %d%%, %d%%)", h.H, h.S, h.L)
 }
 
 func (h HSL) ToPrecise() PreciseColor {

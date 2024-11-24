@@ -13,7 +13,7 @@ type CMYK struct {
 }
 
 func (c CMYK) String() string {
-	return fmt.Sprintf("cmyk(%d, %d, %d, %d)", c.C, c.M, c.Y, c.K)
+	return fmt.Sprintf("cmyk(%d%%, %d%%, %d%%, %d%%)", c.C, c.M, c.Y, c.K)
 }
 
 func (c CMYK) ToPrecise() PreciseColor {
