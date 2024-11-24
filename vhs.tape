@@ -3,7 +3,6 @@ Output ./assets/demo.gif
 Set FontSize 24
 Set Width 1000
 Set Height 500
-Set Shell zsh
 
 Type "termpicker"
 Enter
