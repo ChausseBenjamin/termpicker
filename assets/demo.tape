@@ -7,7 +7,7 @@ Set Width 1000
 Set Height 500
 
 
-Set Shell zsh
+Set Shell bash
 Type "./termpicker"
 Enter
 Sleep 2s
