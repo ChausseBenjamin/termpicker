@@ -31,9 +31,9 @@ jobs:
       run: |
         sudo apt update
         sudo apt install -y ffmpeg
-        wget https://github.com/tsl0922/ttyd/releases/download/1.7.2/ttyd_linux.x86_64 -O ttyd
-        sudo chmod +x ttyd
-        sudo mv ttyd /usr/local/bin/
+        wget https://github.com/tsl0922/ttyd/releases/download/1.7.7/ttyd.x86_64
+        sudo chmod +x ttyd.x86_64
+        sudo mv ttyd.x86_64 /usr/local/bin/ttyd
     - name: Install VHS
       run: |
         wget https://github.com/charmbracelet/vhs/releases/download/v0.8.0/vhs_0.8.0_amd64.deb
