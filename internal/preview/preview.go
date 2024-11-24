@@ -7,19 +7,29 @@ import (
 	"github.com/charmbracelet/lipgloss"
 )
 
-const runeBlock = "█"
+const (
+	runeBlock     = "█"
+	defaultHeight = 5
+	defaultWidth  = 78
+)
 
 type Model struct {
-	size int // height of the square in rows
-	hex  string
+	height int
+	width  int
+	hex    string
 }
 
-func (m *Model) Color(hex string) { m.hex = hex }
+func (m *Model) SetColor(hex string) { m.hex = hex }
+
+func (m *Model) SetHeight(size int) { m.height = size }
+
+func (m *Model) SetWidth(size int) { m.width = size }
 
 func New(hex string) *Model {
 	return &Model{
-		size: 5,
-		hex:  hex,
+		height: defaultHeight,
+		width:  defaultWidth,
+		hex:    hex,
 	}
 }
 
@@ -29,8 +39,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) { return m, nil }
 
 func (m Model) View() string {
 	style := lipgloss.NewStyle().Foreground(lipgloss.Color(m.hex))
-	// size is doubled since terminal cells are 2:1 (h:w)
-	oneRow := strings.Repeat(runeBlock, m.size*2)
-	block := strings.Repeat(oneRow+"\n", m.size)
+	oneRow := strings.Repeat(runeBlock, m.width)
+	block := strings.Repeat(oneRow+"\n", m.height)
 	return style.Render(block)
 }
