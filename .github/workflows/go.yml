@@ -29,8 +29,8 @@ jobs:
 
     - name: Install VHS dependencies
       run: |
-        apt update 
-        apt install -y ttyd ffmpeg
+        sudo apt update 
+        sudo apt install -y ttyd ffmpeg
     - name: Install VHS
       run: |
         wget https://github.com/charmbracelet/vhs/releases/download/v0.8.0/vhs_0.8.0_amd64.deb
