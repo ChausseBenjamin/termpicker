@@ -12,7 +12,7 @@ Here is a quick demo of what has been done so far:
 
 Here is my roadmap to reach what I would consider a finished state:
 
-- [ ] Implement copying to clipboard for various formats (rgb, hex, hsl, cymk, etc...)
+- [x] Implement copying to clipboard for various formats (rgb, hex, hsl, cymk, etc...)
 - [ ] Make the tabs interface prettier with [lipgloss][1] (similar to tabs in [soft-serve][2])
 - [ ] Add a [help bubble][3] at the bottom of the interface to show available keybindings
 - [ ] Add some form of stdout cli flag to output to stdout instead of copying colors
