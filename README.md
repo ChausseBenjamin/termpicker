@@ -2,18 +2,37 @@
 
 A simple Color Picker Designed for your Terminal
 
-This is very much a work in progress, but the end goal is to be able to
-generate and copy colors from the terminal.
-
 Here is a quick demo of what has been done so far:
 <div align="center">
   <img src="./assets/demo.gif" width="600" alt="Termpicker Demo"><br>
 </div>
 
-Here is my roadmap to reach what I would consider a finished state:
+## Features:
 
+- Preview any color using a truecolor terminal
+- Create colors using sliders for RGB, HSL, and CMYK
+- Seamlessly convert between color formats (RGB, HSL, CMYK) as you create
+- Copy the color to your clipboard in various formats (RGB, HEX, HSL, CMYK)
+
+## Usage:
+
+The keybindings are pretty simple and shown in the UI. For a more exhaustive
+list, pressing `?` expands the help section to show all available keybindings.
+
+## Installation
+
+Just grab the latest release for your platform and install the binary
+somewhere in your `PATH`.
+
+Alternatively, you can install it directly from go with:
+```sh
+go install github.com/ChausseBenjamin/termpicker@latest
+```
+
+## Roadmap
+
+- [ ] Add an input flag to pass specific color as a starting value
 - [ ] Add a "cmd" mode to manually input colors
-- [ ] Allow to pass a starting color as an argument when launching the program
 - [ ] Make the tabs interface prettier with [lipgloss][1] (similar to tabs in [soft-serve][2])
 - [ ] Notify user of successful copy to clipboard (or failure)
 - [ ] Unit-test color conversions near edge case colors
