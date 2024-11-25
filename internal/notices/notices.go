@@ -58,3 +58,10 @@ func (m Model) New(msg string) tea.Cmd {
 		return NoticeExpiryMsg(uuid)
 	}
 }
+
+func (m Model) Reset(uuid string) tea.Cmd {
+	return func() tea.Msg {
+		time.Sleep(expiryDelay * time.Second)
+		return NoticeExpiryMsg(uuid)
+	}
+}

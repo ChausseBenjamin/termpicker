@@ -50,6 +50,7 @@ func AppAction(ctx *cli.Context) error {
 				sw.UpdatePicker(2, pc)
 				sw.SetActive(2)
 			}
+			sw.NewNotice("Color set to " + colorStr)
 		}
 	}
 
