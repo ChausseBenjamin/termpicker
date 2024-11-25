@@ -66,12 +66,10 @@ func (m *Model) NewNotice(msg string) tea.Cmd {
 func (m Model) Init() tea.Cmd {
 	cmds := []tea.Cmd{}
 
-	// Make a backup of notices received before the program starts
-	// then reinitialize them with a proper expiration time.
-	noticeBackup := m.notices.Notices
-	m.notices = notices.New()
-	for _, v := range noticeBackup {
-		cmds = append(cmds, m.NewNotice(v))
+	// The NoticeExpiryMsg is never sent to bubbletea by a tea.Cmd for the initial notices
+	// That's why we need to manually reset them here. Otherwise, they would never expire.
+	for k := range m.notices.Notices {
+		cmds = append(cmds, m.notices.Reset(k))
 	}
 
 	for _, p := range m.pickers {
