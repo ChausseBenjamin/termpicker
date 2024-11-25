@@ -17,7 +17,7 @@ jobs:
           go-version: stable
       - name: Build
         run: |
-          sudo go build -o /usr/local/bin/termpicker ./cmd/termpicker
+          sudo go build -o /usr/local/bin/termpicker .
       - uses: charmbracelet/vhs-action@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
