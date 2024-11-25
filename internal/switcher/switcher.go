@@ -51,8 +51,29 @@ func (m *Model) Prev() int {
 	return m.active
 }
 
+func (m *Model) SetActive(i int) {
+	m.active = m.fixSel(i)
+}
+
+func (m *Model) UpdatePicker(i int, c colors.ColorSpace) {
+	m.pickers[i].SetColor(c)
+}
+
+func (m *Model) NewNotice(msg string) tea.Cmd {
+	return m.notices.New(msg)
+}
+
 func (m Model) Init() tea.Cmd {
 	cmds := []tea.Cmd{}
+
+	// Make a backup of notices received before the program starts
+	// then reinitialize them with a proper expiration time.
+	noticeBackup := m.notices.Notices
+	m.notices = notices.New()
+	for _, v := range noticeBackup {
+		cmds = append(cmds, m.NewNotice(v))
+	}
+
 	for _, p := range m.pickers {
 		cmds = append(cmds, p.Init())
 	}
