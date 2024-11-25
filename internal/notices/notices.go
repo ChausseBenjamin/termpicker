@@ -11,7 +11,7 @@ import (
 )
 
 const (
-	expiryDelay = 1 // seconds
+	expiryDelay = 3 // seconds
 )
 
 type NoticeExpiryMsg string
