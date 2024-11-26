@@ -18,6 +18,14 @@ jobs:
       - name: Build
         run: |
           sudo go build -o /usr/local/bin/termpicker .
+      - name: Setup virtual clipboard utility
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y xclip xvfb
+      - name: Start virtual display
+        run: |
+          Xvfb :99 &
+          export DISPLAY=:99
       - uses: charmbracelet/vhs-action@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -28,7 +36,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           commit_message: Update generated VHS GIF
-          branch: master
+          branch: vhs-clipboard  # TODO: Temporary, revert once fixed!
           commit_user_name: vhs-action 📼
           commit_user_email: actions@github.com
           commit_author: vhs-action 📼 <actions@github.com>
