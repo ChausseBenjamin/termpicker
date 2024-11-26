@@ -1,6 +1,8 @@
 package picker
 
-import "github.com/charmbracelet/bubbles/key"
+import (
+	"github.com/charmbracelet/bubbles/key"
+)
 
 type keybinds struct {
 	next, prev key.Binding

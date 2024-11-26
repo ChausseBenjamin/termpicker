@@ -1,9 +1,20 @@
 package switcher
 
-import "github.com/charmbracelet/bubbles/key"
+import (
+	"strings"
+
+	"github.com/charmbracelet/bubbles/key"
+)
+
+const (
+	cpHex  = "x"
+	cpRGB  = "r"
+	cpHSL  = "s"
+	cpCMYK = "c"
+)
 
 type keybinds struct {
-	next, prev, cpHex, cpRgb, cpHsl, cpCmyk, help, quit key.Binding
+	next, prev, copy, help, insert, esc, confirm, quit key.Binding
 }
 
 func newKeybinds() keybinds {
@@ -14,27 +25,32 @@ func newKeybinds() keybinds {
 		),
 		prev: key.NewBinding(
 			key.WithKeys("shift+tab"),
-			key.WithHelp("shift+tab", "prev. picker"),
+			key.WithHelp("shift+tab", "prev picker"),
 		),
-		cpHex: key.NewBinding(
-			key.WithKeys("x"),
-			key.WithHelp("x", "copy hex"),
-		),
-		cpRgb: key.NewBinding(
-			key.WithKeys("r"),
-			key.WithHelp("r", "copy rgb"),
-		),
-		cpHsl: key.NewBinding(
-			key.WithKeys("s"),
-			key.WithHelp("s", "copy hsl"),
-		),
-		cpCmyk: key.NewBinding(
-			key.WithKeys("c"),
-			key.WithHelp("c", "copy cmyk"),
+		copy: key.NewBinding(
+			key.WithKeys(cpHex, cpRGB, cpHSL, cpCMYK),
+			key.WithHelp(
+				strings.Join([]string{cpHex, cpRGB, cpHSL, cpCMYK}, "/"),
+				"copy color",
+			),
 		),
 		help: key.NewBinding(
 			key.WithKeys("?"),
 			key.WithHelp("?", "help"),
+		),
+		insert: key.NewBinding(
+			key.WithKeys("i", ":"),
+			key.WithHelp("i", "manual input"),
+		),
+		esc: key.NewBinding(
+			key.WithKeys("esc"),
+			key.WithHelp("esc", "exit manual input"),
+			key.WithDisabled(),
+		),
+		confirm: key.NewBinding(
+			key.WithKeys("enter"),
+			key.WithHelp("enter", "confirm manual input"),
+			key.WithDisabled(),
 		),
 		quit: key.NewBinding(
 			key.WithKeys("q", "ctrl+c"),
@@ -45,7 +61,7 @@ func newKeybinds() keybinds {
 
 func Keys() []key.Binding {
 	k := newKeybinds()
-	return []key.Binding{k.next, k.prev, k.cpHex, k.cpRgb, k.cpHsl, k.cpCmyk, k.help, k.quit}
+	return []key.Binding{k.next, k.prev, k.copy, k.insert, k.esc, k.confirm, k.help, k.quit}
 }
 
 func shortKeys() [][]key.Binding {

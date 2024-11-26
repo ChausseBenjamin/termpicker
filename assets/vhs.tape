@@ -14,23 +14,26 @@ Type "termpicker"
 Enter
 Sleep 250ms
 Type "jlllljjhhhhh"
-Sleep 200ms
-Type "x"
-Sleep 200ms
-Type "s"
 Sleep 1s
 
 Tab
 Sleep 500ms
 Type "jlllhjlllljhhhlllhkklkl"
 
-Tab
+Type "i"
+Sleep 300ms
+Type "#b7416e"
+Enter
+Sleep 500ms
+
+Tab 2
 Sleep 500ms
 Type "jkllllljhhklhkhh"
 Sleep 1s
 
 Type "?"
-Sleep 500ms
+Sleep 700ms
+Type "?"
 
 Tab
 Sleep 500ms
