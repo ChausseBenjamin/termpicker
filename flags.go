@@ -11,7 +11,6 @@ var AppFlags []cli.Flag = []cli.Flag{
 		Name:    flagLogfile,
 		Aliases: []string{"l"},
 		Usage:   "Log file",
-		Value:   "/dev/null", // Don't log by default
 	},
 	&cli.StringFlag{
 		Name:    "color",

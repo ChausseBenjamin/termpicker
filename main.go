@@ -4,6 +4,7 @@ import (
 	"log/slog"
 	"os"
 
+	"github.com/ChausseBenjamin/termpicker/internal/logging"
 	"github.com/ChausseBenjamin/termpicker/internal/switcher"
 	"github.com/ChausseBenjamin/termpicker/internal/util"
 	tea "github.com/charmbracelet/bubbletea"
@@ -11,15 +12,8 @@ import (
 )
 
 func AppAction(ctx *cli.Context) error {
-	logFile, err := os.Create(ctx.String(flagLogfile))
-	if err != nil {
-		slog.Error("Failed to create log file", util.ErrKey, err.Error())
-		os.Exit(1)
-	}
-	defer logFile.Close()
-
-	handler := slog.NewJSONHandler(logFile, nil)
-	slog.SetDefault(slog.New(handler))
+	logfile := logging.Setup(ctx.String("logfile"))
+	defer logfile.Close()
 
 	slog.Info("Starting Termpicker")
 
