@@ -9,9 +9,9 @@ import (
 	"github.com/ChausseBenjamin/termpicker/internal/picker"
 	"github.com/ChausseBenjamin/termpicker/internal/preview"
 	"github.com/ChausseBenjamin/termpicker/internal/quit"
-	"github.com/ChausseBenjamin/termpicker/internal/util"
 	"github.com/charmbracelet/bubbles/help"
 	"github.com/charmbracelet/bubbles/key"
+	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 )
@@ -21,8 +21,9 @@ type Model struct {
 	pickers  []picker.Model
 	preview  preview.Model
 	help     help.Model
-	fullHelp bool // When false, only show help for the switcher (not children)
 	notices  notices.Model
+	input    textinput.Model
+	fullHelp bool // When false, only show help for the switcher (not children)
 }
 
 func New(pickers []picker.Model) Model {
@@ -143,26 +144,8 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.Prev()
 			m.pickers[m.active].SetColor(cs)
 
-		case key.Matches(msg, keys.cpHex):
-			cmd := m.notices.New(util.Copy(colors.Hex(m.pickers[m.active].GetColor())))
-			cmds = append(cmds, cmd)
-
-		case key.Matches(msg, keys.cpRgb):
-			pc := m.pickers[m.active].GetColor().ToPrecise()
-			rgb := colors.RGB{}.FromPrecise(pc).(colors.RGB)
-			cmd := m.notices.New(util.Copy(rgb.String()))
-			cmds = append(cmds, cmd)
-
-		case key.Matches(msg, keys.cpHsl):
-			pc := m.pickers[m.active].GetColor().ToPrecise()
-			hsl := colors.HSL{}.FromPrecise(pc).(colors.HSL)
-			cmd := m.notices.New(util.Copy(hsl.String()))
-			cmds = append(cmds, cmd)
-
-		case key.Matches(msg, keys.cpCmyk):
-			pc := m.pickers[m.active].GetColor().ToPrecise()
-			cmyk := colors.CMYK{}.FromPrecise(pc).(colors.CMYK)
-			cmd := m.notices.New(util.Copy(cmyk.String()))
+		case key.Matches(msg, keys.copy):
+			cmd := m.notices.New(m.copyColor(msg.String()))
 			cmds = append(cmds, cmd)
 
 		case key.Matches(msg, keys.help):

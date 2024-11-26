@@ -1,4 +1,4 @@
-package userinput
+package parse
 
 import (
 	"errors"
@@ -25,23 +25,23 @@ func sanitize(s string) string {
 	return s
 }
 
-func ParseColor(s string) (colors.ColorSpace, error) {
+func Color(s string) (colors.ColorSpace, error) {
 	s = sanitize(s)
 	switch {
 	case strings.Contains(s, "#"):
-		return parseHex(s)
+		return hex(s)
 	case strings.Contains(s, "rgb"):
-		return parseRGB(s)
+		return rgb(s)
 	case strings.Contains(s, "hsl"):
-		return parseHSL(s)
+		return hsl(s)
 	case strings.Contains(s, "cmyk"):
-		return parseCMYK(s)
+		return cmyk(s)
 	default:
 		return nil, errUnknownColorFormat
 	}
 }
 
-func parseRGB(s string) (colors.ColorSpace, error) {
+func rgb(s string) (colors.ColorSpace, error) {
 	var r, g, b int
 	_, err := fmt.Sscanf(s, "rgb(%d,%d,%d)", &r, &g, &b)
 	if err != nil {
@@ -50,7 +50,7 @@ func parseRGB(s string) (colors.ColorSpace, error) {
 	return colors.RGB{R: r, G: g, B: b}, nil
 }
 
-func parseHex(s string) (colors.ColorSpace, error) {
+func hex(s string) (colors.ColorSpace, error) {
 	var r, g, b int
 	_, err := fmt.Sscanf(s, "#%02x%02x%02x", &r, &g, &b)
 	if err != nil {
@@ -59,7 +59,7 @@ func parseHex(s string) (colors.ColorSpace, error) {
 	return colors.RGB{R: r, G: g, B: b}, nil
 }
 
-func parseCMYK(s string) (colors.ColorSpace, error) {
+func cmyk(s string) (colors.ColorSpace, error) {
 	var c, m, y, k int
 	_, err := fmt.Sscanf(s, "cmyk(%d,%d,%d,%d)", &c, &m, &y, &k)
 	if err != nil {
@@ -68,7 +68,7 @@ func parseCMYK(s string) (colors.ColorSpace, error) {
 	return colors.CMYK{C: c, M: m, Y: y, K: k}, nil
 }
 
-func parseHSL(str string) (colors.ColorSpace, error) {
+func hsl(str string) (colors.ColorSpace, error) {
 	var h, s, l int
 	_, err := fmt.Sscanf(str, "hsl(%d,%d,%d)", &h, &s, &l)
 	if err != nil {

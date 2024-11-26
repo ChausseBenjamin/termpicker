@@ -1,9 +1,20 @@
 package switcher
 
-import "github.com/charmbracelet/bubbles/key"
+import (
+	"strings"
+
+	"github.com/charmbracelet/bubbles/key"
+)
+
+const (
+	cpHex  = "x"
+	cpRGB  = "r"
+	cpHSL  = "s"
+	cpCMYK = "c"
+)
 
 type keybinds struct {
-	next, prev, cpHex, cpRgb, cpHsl, cpCmyk, help, quit key.Binding
+	next, prev, copy, help, insert, quit key.Binding
 }
 
 func newKeybinds() keybinds {
@@ -16,25 +27,19 @@ func newKeybinds() keybinds {
 			key.WithKeys("shift+tab"),
 			key.WithHelp("shift+tab", "prev. picker"),
 		),
-		cpHex: key.NewBinding(
-			key.WithKeys("x"),
-			key.WithHelp("x", "copy hex"),
-		),
-		cpRgb: key.NewBinding(
-			key.WithKeys("r"),
-			key.WithHelp("r", "copy rgb"),
-		),
-		cpHsl: key.NewBinding(
-			key.WithKeys("s"),
-			key.WithHelp("s", "copy hsl"),
-		),
-		cpCmyk: key.NewBinding(
-			key.WithKeys("c"),
-			key.WithHelp("c", "copy cmyk"),
+		copy: key.NewBinding(
+			key.WithKeys(cpHex, cpRGB, cpHSL, cpCMYK),
+			key.WithHelp(
+				strings.Join([]string{cpHex, cpRGB, cpHSL, cpCMYK}, "/"),
+				"copy color",
+			),
 		),
 		help: key.NewBinding(
 			key.WithKeys("?"),
 			key.WithHelp("?", "help"),
+		),
+		insert: key.NewBinding(
+			key.WithKeys("i", ":"),
 		),
 		quit: key.NewBinding(
 			key.WithKeys("q", "ctrl+c"),
@@ -45,7 +50,7 @@ func newKeybinds() keybinds {
 
 func Keys() []key.Binding {
 	k := newKeybinds()
-	return []key.Binding{k.next, k.prev, k.cpHex, k.cpRgb, k.cpHsl, k.cpCmyk, k.help, k.quit}
+	return []key.Binding{k.next, k.prev, k.copy, k.help, k.quit}
 }
 
 func shortKeys() [][]key.Binding {
@@ -68,4 +73,25 @@ func (m Model) AllKeys() [][]key.Binding {
 	copy(keys[1:], m.pickers[m.active].AllKeys())
 	return keys
 	// return append(m.pickers[m.active].AllKeys(), Keys())
+}
+
+func (m Model) textInputKeys() []key.Binding {
+	return []key.Binding{
+		m.input.KeyMap.CharacterForward,
+		m.input.KeyMap.CharacterBackward,
+		m.input.KeyMap.WordForward,
+		m.input.KeyMap.WordBackward,
+		m.input.KeyMap.DeleteWordBackward,
+		m.input.KeyMap.DeleteWordForward,
+		m.input.KeyMap.DeleteAfterCursor,
+		m.input.KeyMap.DeleteBeforeCursor,
+		m.input.KeyMap.DeleteCharacterBackward,
+		m.input.KeyMap.DeleteCharacterForward,
+		m.input.KeyMap.LineStart,
+		m.input.KeyMap.LineEnd,
+		m.input.KeyMap.Paste,
+		m.input.KeyMap.AcceptSuggestion,
+		m.input.KeyMap.NextSuggestion,
+		m.input.KeyMap.PrevSuggestion,
+	}
 }

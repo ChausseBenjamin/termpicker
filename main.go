@@ -5,9 +5,9 @@ import (
 	"os"
 
 	"github.com/ChausseBenjamin/termpicker/internal/colors"
+	"github.com/ChausseBenjamin/termpicker/internal/parse"
 	"github.com/ChausseBenjamin/termpicker/internal/picker"
 	"github.com/ChausseBenjamin/termpicker/internal/switcher"
-	"github.com/ChausseBenjamin/termpicker/internal/userinput"
 	"github.com/ChausseBenjamin/termpicker/internal/util"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/urfave/cli/v2"
@@ -33,7 +33,7 @@ func AppAction(ctx *cli.Context) error {
 	})
 
 	if colorStr := ctx.String("color"); colorStr != "" {
-		color, err := userinput.ParseColor(colorStr)
+		color, err := parse.Color(colorStr)
 		if err != nil {
 			slog.Error("Failed to parse color", util.ErrKey, err)
 			sw.NewNotice(err.Error())
