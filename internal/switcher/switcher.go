@@ -3,6 +3,7 @@ package switcher
 import (
 	"fmt"
 	"log/slog"
+	"strings"
 
 	"github.com/ChausseBenjamin/termpicker/internal/colors"
 	"github.com/ChausseBenjamin/termpicker/internal/notices"
@@ -92,14 +93,29 @@ func (m Model) Init() tea.Cmd {
 }
 
 func (m Model) View() string {
-	tabs := "|"
+	norm := lipgloss.NewStyle().Faint(true)
+	bright := lipgloss.NewStyle().Faint(false)
+
+	delims := [3]string{"[ ", " | ", "]"}
+	for i, d := range delims {
+		delims[i] = bright.Render(d)
+	}
+
+	var sections []string
 	for i, p := range m.pickers {
 		if i == m.active {
-			tabs += fmt.Sprintf(">%s<|", p.Title())
+			sections = append(
+				sections,
+				bright.
+					Underline(true).
+					Bold(true).
+					Render(p.Title()),
+			)
 		} else {
-			tabs += fmt.Sprintf(" %s |", p.Title())
+			sections = append(sections, norm.Render(p.Title()))
 		}
 	}
+	tabs := "[ " + strings.Join(sections, " | ") + " ]"
 
 	pickerView := m.pickers[m.active].View()
 	boxStyle := lipgloss.NewStyle().Border(lipgloss.RoundedBorder(), true, true, false, true)
