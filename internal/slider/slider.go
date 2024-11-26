@@ -3,8 +3,8 @@ package slider
 import (
 	"fmt"
 
+	"github.com/ChausseBenjamin/termpicker/internal/progress"
 	"github.com/charmbracelet/bubbles/key"
-	"github.com/charmbracelet/bubbles/progress"
 	tea "github.com/charmbracelet/bubbletea"
 )
 
