@@ -1,8 +1,8 @@
 package picker
 
 import (
+	"github.com/ChausseBenjamin/termpicker/internal/progress"
 	"github.com/ChausseBenjamin/termpicker/internal/slider"
-	"github.com/charmbracelet/bubbles/progress"
 )
 
 func RGB() *Model {
