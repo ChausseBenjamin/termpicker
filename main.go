@@ -3,23 +3,23 @@ package main
 import (
 	"log/slog"
 	"os"
+	"time"
 
+	"github.com/ChausseBenjamin/termpicker/internal/logging"
 	"github.com/ChausseBenjamin/termpicker/internal/switcher"
 	"github.com/ChausseBenjamin/termpicker/internal/util"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/urfave/cli/v2"
 )
 
-func AppAction(ctx *cli.Context) error {
-	logFile, err := os.Create(ctx.String(flagLogfile))
-	if err != nil {
-		slog.Error("Failed to create log file", util.ErrKey, err.Error())
-		os.Exit(1)
-	}
-	defer logFile.Close()
+var ( // Set by the build system
+	version = "DEVELOPMENT-SNAPSHOT"
+	date    = ""
+)
 
-	handler := slog.NewJSONHandler(logFile, nil)
-	slog.SetDefault(slog.New(handler))
+func AppAction(ctx *cli.Context) error {
+	logfile := logging.Setup(ctx.String("logfile"))
+	defer logfile.Close()
 
 	slog.Info("Starting Termpicker")
 
@@ -37,11 +37,17 @@ func AppAction(ctx *cli.Context) error {
 }
 
 func main() {
+	compileDate, _ := time.Parse(time.RFC3339, date)
 	app := &cli.App{
 		Name:   "Termpicker",
 		Usage:  "A terminal-based color picker",
 		Action: AppAction,
-		Flags:  AppFlags,
+		Authors: []*cli.Author{
+			{Name: "Benjamin Chausse", Email: "benjamin@chausse.xyz"},
+		},
+		Version:  version,
+		Flags:    AppFlags,
+		Compiled: compileDate,
 	}
 	if err := app.Run(os.Args); err != nil {
 		slog.Error("Program crashed", util.ErrKey, err.Error())
