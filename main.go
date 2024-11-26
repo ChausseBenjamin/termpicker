@@ -13,7 +13,7 @@ import (
 )
 
 var ( // Set by the build system
-	version = "DEVELOPMENT-SNAPSHOT"
+	version = "compiled"
 	date    = ""
 )
 
