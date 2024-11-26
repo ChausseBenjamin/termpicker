@@ -4,9 +4,6 @@ import (
 	"log/slog"
 	"os"
 
-	"github.com/ChausseBenjamin/termpicker/internal/colors"
-	"github.com/ChausseBenjamin/termpicker/internal/parse"
-	"github.com/ChausseBenjamin/termpicker/internal/picker"
 	"github.com/ChausseBenjamin/termpicker/internal/switcher"
 	"github.com/ChausseBenjamin/termpicker/internal/util"
 	tea "github.com/charmbracelet/bubbletea"
@@ -26,32 +23,10 @@ func AppAction(ctx *cli.Context) error {
 
 	slog.Info("Starting Termpicker")
 
-	sw := switcher.New([]picker.Model{
-		*picker.RGB(),
-		*picker.CMYK(),
-		*picker.HSL(),
-	})
+	sw := switcher.New()
 
 	if colorStr := ctx.String("color"); colorStr != "" {
-		color, err := parse.Color(colorStr)
-		if err != nil {
-			slog.Error("Failed to parse color", util.ErrKey, err)
-			sw.NewNotice(err.Error())
-		} else {
-			pc := color.ToPrecise()
-			switch color.(type) {
-			case colors.RGB:
-				sw.UpdatePicker(0, pc)
-				sw.SetActive(0)
-			case colors.CMYK:
-				sw.UpdatePicker(1, pc)
-				sw.SetActive(1)
-			case colors.HSL:
-				sw.UpdatePicker(2, pc)
-				sw.SetActive(2)
-			}
-			sw.NewNotice("Color set to " + colorStr)
-		}
+		sw.NewNotice(sw.SetColorFromText(colorStr))
 	}
 
 	p := tea.NewProgram(sw)

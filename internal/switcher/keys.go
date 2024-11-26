@@ -14,7 +14,7 @@ const (
 )
 
 type keybinds struct {
-	next, prev, copy, help, insert, quit key.Binding
+	next, prev, copy, help, insert, esc, confirm, quit key.Binding
 }
 
 func newKeybinds() keybinds {
@@ -25,7 +25,7 @@ func newKeybinds() keybinds {
 		),
 		prev: key.NewBinding(
 			key.WithKeys("shift+tab"),
-			key.WithHelp("shift+tab", "prev. picker"),
+			key.WithHelp("shift+tab", "prev picker"),
 		),
 		copy: key.NewBinding(
 			key.WithKeys(cpHex, cpRGB, cpHSL, cpCMYK),
@@ -40,6 +40,17 @@ func newKeybinds() keybinds {
 		),
 		insert: key.NewBinding(
 			key.WithKeys("i", ":"),
+			key.WithHelp("i", "manual input"),
+		),
+		esc: key.NewBinding(
+			key.WithKeys("esc"),
+			key.WithHelp("esc", "exit manual input"),
+			key.WithDisabled(),
+		),
+		confirm: key.NewBinding(
+			key.WithKeys("enter"),
+			key.WithHelp("enter", "confirm manual input"),
+			key.WithDisabled(),
 		),
 		quit: key.NewBinding(
 			key.WithKeys("q", "ctrl+c"),
@@ -50,7 +61,7 @@ func newKeybinds() keybinds {
 
 func Keys() []key.Binding {
 	k := newKeybinds()
-	return []key.Binding{k.next, k.prev, k.copy, k.help, k.quit}
+	return []key.Binding{k.next, k.prev, k.copy, k.insert, k.esc, k.confirm, k.help, k.quit}
 }
 
 func shortKeys() [][]key.Binding {
@@ -73,25 +84,4 @@ func (m Model) AllKeys() [][]key.Binding {
 	copy(keys[1:], m.pickers[m.active].AllKeys())
 	return keys
 	// return append(m.pickers[m.active].AllKeys(), Keys())
-}
-
-func (m Model) textInputKeys() []key.Binding {
-	return []key.Binding{
-		m.input.KeyMap.CharacterForward,
-		m.input.KeyMap.CharacterBackward,
-		m.input.KeyMap.WordForward,
-		m.input.KeyMap.WordBackward,
-		m.input.KeyMap.DeleteWordBackward,
-		m.input.KeyMap.DeleteWordForward,
-		m.input.KeyMap.DeleteAfterCursor,
-		m.input.KeyMap.DeleteBeforeCursor,
-		m.input.KeyMap.DeleteCharacterBackward,
-		m.input.KeyMap.DeleteCharacterForward,
-		m.input.KeyMap.LineStart,
-		m.input.KeyMap.LineEnd,
-		m.input.KeyMap.Paste,
-		m.input.KeyMap.AcceptSuggestion,
-		m.input.KeyMap.NextSuggestion,
-		m.input.KeyMap.PrevSuggestion,
-	}
 }

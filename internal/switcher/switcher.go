@@ -16,24 +16,36 @@ import (
 	"github.com/charmbracelet/lipgloss"
 )
 
+const (
+	IndexRgb int = iota
+	IndexCmyk
+	IndexHsl
+)
+
 type Model struct {
 	active   int
 	pickers  []picker.Model
 	preview  preview.Model
 	help     help.Model
-	notices  notices.Model
 	input    textinput.Model
+	notices  notices.Model
 	fullHelp bool // When false, only show help for the switcher (not children)
 }
 
-func New(pickers []picker.Model) Model {
+func New() Model {
+	pickers := []picker.Model{ // Order MUST match the Index* constants
+		*picker.RGB(),
+		*picker.CMYK(),
+		*picker.HSL(),
+	}
 	return Model{
 		active:   0,
 		pickers:  pickers,
 		preview:  *preview.New(colors.Hex(pickers[0].GetColor())),
 		help:     help.New(),
-		fullHelp: false,
+		input:    textinput.New(),
 		notices:  notices.New(),
+		fullHelp: false,
 	}
 }
 
@@ -111,14 +123,20 @@ func (m Model) View() string {
 		// helpstr = m.help.FullHelpView([][]key.Binding{m.AllKeys()[0]})
 		helpstr = m.help.FullHelpView(shortKeys())
 	}
-
 	helpstr = boxStyle.Render(helpstr)
 
-	return fmt.Sprintf("%s\n%s\n%s\n%v\n%v",
+	inputStr := ""
+	if m.input.Focused() {
+		boxStyle = boxStyle.Border(lipgloss.RoundedBorder(), true, true, true, true).Width(w)
+		inputStr = boxStyle.Render(m.input.View())
+	}
+
+	return fmt.Sprintf("%s\n%s\n%s\n%v\n%v\n%v",
 		tabs,
 		pickerView,
 		previewStr,
 		helpstr,
+		inputStr,
 		m.notices.View(),
 	)
 }
@@ -132,7 +150,28 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		newNotices, cmd := m.notices.Update(msg)
 		m.notices = newNotices.(notices.Model)
 		cmds = append(cmds, cmd)
+
 	case tea.KeyMsg:
+
+		if m.input.Focused() {
+			keys.esc.SetEnabled(true)
+			keys.confirm.SetEnabled(true)
+			if key.Matches(msg, keys.esc) {
+				m.input.Blur()
+			} else if key.Matches(msg, keys.confirm) {
+				m.input.Blur()
+				cmds = append(
+					cmds,
+					m.NewNotice(m.SetColorFromText(m.input.Value())),
+					m.Init(), // Will force a slider update/animation
+				)
+			}
+			newInput, cmd := m.input.Update(msg)
+			m.input = newInput
+			cmds = append(cmds, cmd)
+			return m, tea.Batch(cmds...)
+		}
+
 		switch {
 		case key.Matches(msg, keys.next):
 			cs := m.pickers[m.active].GetColor()
@@ -151,6 +190,10 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case key.Matches(msg, keys.help):
 			m.fullHelp = !m.fullHelp
 
+		case key.Matches(msg, keys.insert):
+			cmd := m.input.Focus()
+			cmds = append(cmds, cmd)
+
 		case key.Matches(msg, keys.quit):
 			return quit.Model{}, tea.Quit
 
@@ -166,7 +209,6 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			newNotices, cmd := m.notices.Update(msg)
 			m.notices = newNotices.(notices.Model)
 			cmds = append(cmds, cmd)
-
 			return m, tea.Batch(cmds...)
 		}
 	default:
