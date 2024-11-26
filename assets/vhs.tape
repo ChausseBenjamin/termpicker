@@ -2,10 +2,11 @@ Output ./assets/demo.gif
 
 Require termpicker
 
-Set FontSize 18
+Set Framerate 60
 Set Width 850
 Set Height 600
 
+Set FontSize 18
 Set Margin 15
 Set MarginFill "#6F4624"
 Set BorderRadius 10
