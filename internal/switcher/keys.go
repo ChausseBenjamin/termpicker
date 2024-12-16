@@ -7,10 +7,12 @@ import (
 )
 
 const (
-	cpHex  = "x"
-	cpRGB  = "r"
-	cpHSL  = "s"
-	cpCMYK = "c"
+	cpHex   = "x"
+	cpRGB   = "r"
+	cpHSL   = "s"
+	cpCMYK  = "c"
+	cpEscFG = "f"
+	cpEscBG = "b"
 )
 
 type keybinds struct {
@@ -18,6 +20,7 @@ type keybinds struct {
 }
 
 func newKeybinds() keybinds {
+	cpKeys := []string{cpHex, cpRGB, cpHSL, cpCMYK, cpEscBG, cpEscFG}
 	return keybinds{
 		next: key.NewBinding(
 			key.WithKeys("tab"),
@@ -28,9 +31,9 @@ func newKeybinds() keybinds {
 			key.WithHelp("shift+tab", "prev picker"),
 		),
 		copy: key.NewBinding(
-			key.WithKeys(cpHex, cpRGB, cpHSL, cpCMYK),
+			key.WithKeys(cpKeys...),
 			key.WithHelp(
-				strings.Join([]string{cpHex, cpRGB, cpHSL, cpCMYK}, "/"),
+				strings.Join(cpKeys, "/"),
 				"copy color",
 			),
 		),

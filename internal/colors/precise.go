@@ -6,6 +6,8 @@ import (
 	"strings"
 )
 
+const esc = "\\X1B"
+
 type ColorSpace interface {
 	ToPrecise() PreciseColor
 	FromPrecise(PreciseColor) ColorSpace
@@ -39,4 +41,20 @@ func Hex(cs ColorSpace) string {
 		int(math.Round(p.G*255)),
 		int(math.Round(p.B*255)),
 	))
+}
+
+func EscapedSeq(cs ColorSpace, fg bool) string {
+	p := cs.ToPrecise()
+	mod := 38 // fg by default
+	if !fg {
+		mod += 10
+	}
+
+	r := int(math.Round(p.R * 255))
+	g := int(math.Round(p.G * 255))
+	b := int(math.Round(p.B * 255))
+
+	return fmt.Sprintf("%s[%d;2;%d;%d;%dm",
+		esc, mod, r, g, b,
+	)
 }

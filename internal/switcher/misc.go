@@ -8,10 +8,6 @@ import (
 	"github.com/ChausseBenjamin/termpicker/internal/util"
 )
 
-const (
-	okCpMsg = "Copied %s to clipboard as %s"
-)
-
 func (m Model) copyColor(format string) string {
 	pc := m.pickers[m.active].GetColor().ToPrecise()
 	switch format {
@@ -26,6 +22,10 @@ func (m Model) copyColor(format string) string {
 	case cpCMYK:
 		cmyk := colors.CMYK{}.FromPrecise(pc).(colors.CMYK)
 		return util.Copy(cmyk.String())
+	case cpEscFG:
+		return util.Copy(colors.EscapedSeq(m.pickers[m.active].GetColor(), true))
+	case cpEscBG:
+		return util.Copy(colors.EscapedSeq(m.pickers[m.active].GetColor(), false))
 	default:
 		return "Copy format not supported"
 	}
