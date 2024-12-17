@@ -10,11 +10,6 @@ jobs:
         uses: actions/checkout@v3
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
-      - name: Set environment variables
-        id: set-vars
-        run: |
-          echo "PKG_NAME=$(basename ${GITHUB_REPOSITORY})" >> $GITHUB_ENV
-          echo "PKG_REPO_URI=https://github.com/${GITHUB_REPOSITORY}" >> $GITHUB_ENV
       - name: Build the Docker image
         run: |
           docker build -t aur_publisher ./releases/aur
@@ -22,9 +17,9 @@ jobs:
         env:
           AUR_PRIVATE_KEY: ${{ secrets.AUR_PRIVATE_KEY }}
           AUR_PUBLIC_KEY: ${{ secrets.AUR_PUBLIC_KEY }}
-          PKG_REPO_URI: ${{ env.PKG_REPO_URI }}
-          PKG_NAME: ${{ env.PKG_NAME }}
-          GIT_USER: ${{ secrets.GIT_USER }}
+          PKG_REPO_URI: https://github.com/ChausseBenjamin/termpicker
+          PKG_NAME: termpicker
+          GIT_USER: ChausseBenjamin
         run: |-
           docker run --rm \
             -e AUR_PRIVATE_KEY=$AUR_PRIVATE_KEY \
