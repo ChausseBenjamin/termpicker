@@ -3,28 +3,30 @@ name: Publish to the AUR
 on:
   workflow_dispatch:  # Manual trigger via GitHub UI
 jobs:
-  build-and-run:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
-      - name: Build the Docker image
-        run: |
-          docker build -t aur_publisher ./releases/aur
-      - name: Run the Docker container
-        env:
-          AUR_PRIVATE_KEY: ${{ secrets.AUR_PRIVATE_KEY }}
-          AUR_PUBLIC_KEY: ${{ secrets.AUR_PUBLIC_KEY }}
-          PKG_REPO_URI: https://github.com/ChausseBenjamin/termpicker
-          PKG_NAME: termpicker
-          GIT_USER: ChausseBenjamin
-        run: |-
-          docker run --rm \
-            -e AUR_PRIVATE_KEY=$AUR_PRIVATE_KEY \
-            -e AUR_PUBLIC_KEY=$AUR_PUBLIC_KEY \
-            -e PKG_REPO_URI=$PKG_REPO_URI \
-            -e PKG_NAME=$PKG_NAME \
-            -e GIT_USER=$GIT_USER \
-            aur_publisher
+publish-aur:
+  runs-on: ubuntu-latest
+  steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+    - name: Set up Docker
+      uses: docker/setup-buildx-action@v2
+      with:
+        driver: auto
+    - name: Build AUR Package
+      run: |
+        docker build -t aur-publisher -f releases/aur/Dockerfile .
+    - name: Run AUR Publisher
+      env:
+        AUR_PRIVATE_KEY: ${{ secrets.AUR_PRIVATE_KEY }}
+        AUR_PUBLIC_KEY: ${{ secrets.AUR_PUBLIC_KEY }}
+        PKG_REPO_URI: https://github.com/ChausseBenjamin/termpicker.git
+        PKG_NAME: termpicker
+        GIT_USER: ChausseBenjamin
+      run: |-
+        docker run \
+          -e AUR_PRIVATE_KEY=$AUR_PRIVATE_KEY \
+          -e AUR_PUBLIC_KEY=$AUR_PUBLIC_KEY \
+          -e PKG_REPO_URI=$PKG_REPO_URI \
+          -e PKG_NAME=$PKG_NAME \
+          -e GIT_USER=$GIT_USER \
+          aur-publisher
