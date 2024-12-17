@@ -24,7 +24,7 @@ jobs:
           PKG_NAME: termpicker
           GIT_USER: ChausseBenjamin
         run: |-
-          docker run \
+          docker run -rm \
             -e AUR_PRIVATE_KEY="$AUR_PRIVATE_KEY" \
             -e AUR_PUBLIC_KEY="$AUR_PUBLIC_KEY" \
             -e PKG_REPO_URI="$PKG_REPO_URI" \
