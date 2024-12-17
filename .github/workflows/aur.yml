@@ -8,13 +8,14 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-      - name: Set up Docker
+      - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
         with:
-          driver: auto
+          driver: docker    # Use 'docker' instead of 'auto'
       - name: Build AUR Package
         run: |
-          docker build -t aur-publisher -f releases/aur/Dockerfile .
+          docker buildx create --use
+          docker buildx build -t aur-publisher -f releases/aur/Dockerfile .
       - name: Run AUR Publisher
         env:
           AUR_PRIVATE_KEY: ${{ secrets.AUR_PRIVATE_KEY }}
