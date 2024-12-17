@@ -20,7 +20,7 @@ jobs:
         env:
           AUR_PRIVATE_KEY: ${{ secrets.AUR_PRIVATE_KEY }}
           AUR_PUBLIC_KEY: ${{ secrets.AUR_PUBLIC_KEY }}
-          PKG_REPO_URI: https://github.com/ChausseBenjamin/termpicker.git
+          PKG_REPO_URI: https://github.com/ChausseBenjamin/termpicker
           PKG_NAME: termpicker
           GIT_USER: ChausseBenjamin
         run: |-
