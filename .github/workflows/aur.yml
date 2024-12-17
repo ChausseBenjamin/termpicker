@@ -12,11 +12,7 @@ jobs:
         uses: docker/setup-buildx-action@v2
         with:
           driver: docker    # Use 'docker' instead of 'auto'
-      - name: Build AUR Package
-        run: |
-          docker buildx create --use
-          docker buildx build -t "aur-publisher" releases/aur
-      - name: Run AUR Publisher
+      - name: Build & run AUR Package
         env:
           AUR_PRIVATE_KEY: ${{ secrets.AUR_PRIVATE_KEY }}
           AUR_PUBLIC_KEY: ${{ secrets.AUR_PUBLIC_KEY }}
@@ -24,7 +20,9 @@ jobs:
           PKG_NAME: termpicker
           GIT_USER: ChausseBenjamin
         run: |-
-          docker run -rm \
+          docker buildx create --use
+          docker buildx build -t "aur-publisher" releases/aur
+          docker run \
             -e AUR_PRIVATE_KEY="$AUR_PRIVATE_KEY" \
             -e AUR_PUBLIC_KEY="$AUR_PUBLIC_KEY" \
             -e PKG_REPO_URI="$PKG_REPO_URI" \
