@@ -17,7 +17,7 @@ jobs:
           echo "PKG_REPO_URI=https://github.com/${GITHUB_REPOSITORY}" >> $GITHUB_ENV
       - name: Build the Docker image
         run: |
-          docker build -t aur-publisher ./releases/aur
+          docker build -t aur_publisher ./releases/aur
       - name: Run the Docker container
         env:
           AUR_PRIVATE_KEY: ${{ secrets.AUR_PRIVATE_KEY }}
@@ -32,4 +32,4 @@ jobs:
             -e PKG_REPO_URI=$PKG_REPO_URI \
             -e PKG_NAME=$PKG_NAME \
             -e GIT_USER=$GIT_USER \
-            aur-publisher
+            aur_publisher

@@ -1,4 +1,4 @@
-FROM archlinux:latest
+FROM archlinux:latest AS aur_publisher
 
 # Install necessary packages for the script
 RUN pacman-key init
