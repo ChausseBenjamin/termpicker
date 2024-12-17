@@ -15,7 +15,7 @@ jobs:
       - name: Build AUR Package
         run: |
           docker buildx create --use
-          docker buildx build -t aur-publisher -f releases/aur/Dockerfile .
+          docker buildx build -t aur-publisher releases/aur
       - name: Run AUR Publisher
         env:
           AUR_PRIVATE_KEY: ${{ secrets.AUR_PRIVATE_KEY }}
