@@ -15,7 +15,7 @@ jobs:
       - name: Build AUR Package
         run: |
           docker buildx create --use
-          docker buildx build -t aur-publisher releases/aur
+          docker buildx build -t "aur-publisher" releases/aur
       - name: Run AUR Publisher
         env:
           AUR_PRIVATE_KEY: ${{ secrets.AUR_PRIVATE_KEY }}
@@ -25,9 +25,9 @@ jobs:
           GIT_USER: ChausseBenjamin
         run: |-
           docker run \
-            -e AUR_PRIVATE_KEY=$AUR_PRIVATE_KEY \
-            -e AUR_PUBLIC_KEY=$AUR_PUBLIC_KEY \
-            -e PKG_REPO_URI=$PKG_REPO_URI \
-            -e PKG_NAME=$PKG_NAME \
-            -e GIT_USER=$GIT_USER \
+            -e AUR_PRIVATE_KEY="$AUR_PRIVATE_KEY" \
+            -e AUR_PUBLIC_KEY="$AUR_PUBLIC_KEY" \
+            -e PKG_REPO_URI="$PKG_REPO_URI" \
+            -e PKG_NAME="$PKG_NAME" \
+            -e GIT_USER="$GIT_USER" \
             aur-publisher
