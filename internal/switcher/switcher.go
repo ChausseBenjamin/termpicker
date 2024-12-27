@@ -137,7 +137,7 @@ func (m Model) View() string {
 
 	var inputStr string
 	if m.input.Focused() {
-		m.input.Width = w
+		m.input.Width = w - lipgloss.Width(ui.PromptPrefix) - 1
 		inputStr = ui.Style().Boxed.Render(m.input.View())
 	}
 
