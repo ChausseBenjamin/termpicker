@@ -6,7 +6,6 @@ import (
 )
 
 const (
-	// Colors:
 	textSel   = "#F2F1F0"
 	textNorm  = "#A7AFB1"
 	textFaint = "#6F797B"
