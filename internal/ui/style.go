@@ -73,6 +73,7 @@ func init() {
 		TabNorm: baseStyle.Inherit(lg.NewStyle().
 			Foreground(lg.Color(textFaint)).
 			Underline(false).
+			Faint(true).
 			Bold(false)),
 
 		TabGeom: baseStyle.Inherit(lg.NewStyle().
