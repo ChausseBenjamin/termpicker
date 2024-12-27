@@ -5,12 +5,9 @@ import (
 
 	"github.com/ChausseBenjamin/termpicker/internal/colors"
 	"github.com/ChausseBenjamin/termpicker/internal/slider"
+	"github.com/ChausseBenjamin/termpicker/internal/ui"
 	"github.com/charmbracelet/bubbles/key"
 	tea "github.com/charmbracelet/bubbletea"
-)
-
-const (
-	activeRune = '>'
 )
 
 type Model struct {
@@ -114,15 +111,19 @@ func (m Model) Init() tea.Cmd {
 func (m Model) View() string {
 	var s string
 
-	carriageReturn := ""
+	newline := ""
 	for i, slider := range m.sliders {
 		if i > 0 {
-			carriageReturn = "\n"
+			newline = "\n"
 		}
 		if i == m.active {
-			s += fmt.Sprintf("%v%c %s", carriageReturn, activeRune, slider.View())
+			s += fmt.Sprintf("%v%s %s",
+				newline,
+				ui.Style().PickerCursor.Render(ui.PickerSelRune),
+				slider.View(),
+			)
 		} else {
-			s += fmt.Sprintf("%v  %s", carriageReturn, slider.View())
+			s += fmt.Sprintf("%v  %s", newline, slider.View())
 		}
 	}
 	return s
