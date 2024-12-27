@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/ChausseBenjamin/termpicker/internal/progress"
+	"github.com/ChausseBenjamin/termpicker/internal/ui"
 	"github.com/charmbracelet/bubbles/key"
 	tea "github.com/charmbracelet/bubbletea"
 )
@@ -21,6 +22,7 @@ func New(label byte, maxVal int, opts ...progress.Option) Model {
 		label: label,
 		progress: progress.New(
 			progress.WithoutPercentage(),
+			progress.WithColorProfile(ui.ColorProfile()),
 		),
 		max:      maxVal,
 		current:  maxVal / 2,
