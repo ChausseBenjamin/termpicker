@@ -61,7 +61,7 @@ func init() {
 	baseSliderOpts := []progress.Option{
 		progress.WithColorProfile(ColorProfile()),
 		progress.WithoutPercentage(),
-		// progress.WithFillCharacters(" ", "█"), // for legacy look
+		// progress.WithBinaryFill(), // uncomment for legacy look
 	}
 
 	style = StyleSheet{

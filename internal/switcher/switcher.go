@@ -123,15 +123,16 @@ func (m Model) View() string {
 
 	m.help.Styles.ShortKey.Width(w)
 
-	var helpstr string
+	var helpStr string
+	m.help.Width = w
 	if m.fullHelp {
-		helpstr = m.help.FullHelpView(m.AllKeys())
+		helpStr = m.help.FullHelpView(m.AllKeys())
 	} else {
 		// This is a hack since the current view has too many keys
 		// and the horizontal "ShortHelpView" gets too wide.
 		// "FullHelpView" seperates keys by columns (and we only show the first).
-		// helpstr = m.help.FullHelpView([][]key.Binding{m.AllKeys()[0]})
-		helpstr = m.help.FullHelpView(shortKeys())
+		// helpStr = m.help.FullHelpView([][]key.Binding{m.AllKeys()[0]})
+		helpStr = m.help.FullHelpView(shortKeys())
 	}
 
 	var inputStr string
@@ -143,7 +144,7 @@ func (m Model) View() string {
 	mainArea := ui.Style().Boxed.Render(strings.Join([]string{
 		pickerStr,
 		previewStr,
-		helpstr,
+		helpStr,
 	}, "\n"))
 
 	return strings.Join(

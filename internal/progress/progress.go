@@ -107,6 +107,18 @@ func WithFillCharacters(steps []FillStep) Option {
 	}
 }
 
+// WithBinaryFill results in a less granular but possible more widely compatible
+// progress bar as only two characters are used to represent completion of a
+// single block (full/complete and empty/incomplete).
+func WithBinaryFill() Option {
+	return func(m *Model) {
+		m.FillSteps = []FillStep{
+			{' ', 0.0},
+			{'█', 1.0},
+		}
+	}
+}
+
 // WithoutPercentage hides the numeric percentage.
 func WithoutPercentage() Option {
 	return func(m *Model) {
