@@ -168,7 +168,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	case tea.KeyMsg:
 
-		if m.input.Focused() {
+		if m.input.Focused() && msg.String() != "ctrl+c" {
 			keys.esc.SetEnabled(true)
 			keys.confirm.SetEnabled(true)
 			if key.Matches(msg, keys.esc) {
