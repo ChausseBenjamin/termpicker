@@ -165,8 +165,6 @@ type Model struct {
 	// "Filled" sections of the progress bar.
 	FullColor string
 
-	EmptyColor string
-
 	// Settings for rendering the numeric percentage.
 	ShowPercentage  bool
 	PercentFormat   string // a fmt string for a float
@@ -200,7 +198,6 @@ func New(opts ...Option) Model {
 		Width:          defaultWidth,
 		FillSteps:      defaultFillSteps(),
 		FullColor:      "#7571F9",
-		EmptyColor:     "#606060",
 		ShowPercentage: true,
 		PercentFormat:  " %3.0f%%",
 		colorProfile:   termenv.ColorProfile(),
@@ -332,17 +329,13 @@ func (m Model) barView(b *strings.Builder, percent float64, textWidth int) {
 			b.WriteString(
 				termenv.String(string(step.rune)).
 					Foreground(m.color(color)).
-					Background(m.color(m.EmptyColor)).
 					String(),
 			)
 		} else {
 			// Empty cell
 			emptyStep := m.FillSteps[0]
 			b.WriteString(
-				termenv.String(string(emptyStep.rune)).
-					Foreground(m.color(m.EmptyColor)).
-					Background(m.color(m.EmptyColor)).
-					String(),
+				termenv.String(string(emptyStep.rune)).String(),
 			)
 		}
 	}
