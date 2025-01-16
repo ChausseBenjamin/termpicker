@@ -10,6 +10,7 @@ import (
 	"github.com/ChausseBenjamin/termpicker/internal/picker"
 	"github.com/ChausseBenjamin/termpicker/internal/preview"
 	"github.com/ChausseBenjamin/termpicker/internal/quit"
+	"github.com/ChausseBenjamin/termpicker/internal/ui"
 	"github.com/charmbracelet/bubbles/help"
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/textinput"
@@ -39,12 +40,19 @@ func New() Model {
 		*picker.CMYK(),
 		*picker.HSL(),
 	}
+
+	input := textinput.New()
+	input.PromptStyle = ui.Style().InputPrompt
+	input.TextStyle = ui.Style().InputText
+	input.Prompt = ui.PromptPrefix
+	input.Placeholder = ui.PromptPlaceholder
+
 	return Model{
 		active:   0,
 		pickers:  pickers,
 		preview:  *preview.New(colors.Hex(pickers[0].GetColor())),
 		help:     help.New(),
-		input:    textinput.New(),
+		input:    input,
 		notices:  notices.New(),
 		fullHelp: false,
 	}
@@ -93,68 +101,59 @@ func (m Model) Init() tea.Cmd {
 }
 
 func (m Model) View() string {
-	norm := lipgloss.NewStyle().Faint(true)
-	bright := lipgloss.NewStyle().Faint(false)
-
-	delims := [3]string{"[ ", " | ", "]"}
-	for i, d := range delims {
-		delims[i] = bright.Render(d)
-	}
-
-	var sections []string
+	tabs := make([]string, len(m.pickers))
 	for i, p := range m.pickers {
 		if i == m.active {
-			sections = append(
-				sections,
-				bright.
-					Underline(true).
-					Bold(true).
-					Render(p.Title()),
-			)
+			tabs[i] = ui.Style().TabSel.Render(p.Title())
 		} else {
-			sections = append(sections, norm.Render(p.Title()))
+			tabs[i] = ui.Style().TabNorm.Render(p.Title())
 		}
 	}
-	tabs := "[ " + strings.Join(sections, " | ") + " ]"
+	tabStr := strings.Join([]string{
+		ui.Style().TabGeom.Render(ui.TabSepLeft),
+		strings.Join(tabs, ui.Style().TabGeom.Render(ui.TabSepMid)),
+		ui.Style().TabGeom.Render(ui.TabSepRight),
+	}, " ")
 
-	pickerView := m.pickers[m.active].View()
-	boxStyle := lipgloss.NewStyle().Border(lipgloss.RoundedBorder(), true, true, false, true)
-	w := lipgloss.Width(pickerView)
-	pickerView = boxStyle.Render(pickerView)
+	pickerStr := m.pickers[m.active].View()
+	w := lipgloss.Width(pickerStr)
 
 	m.preview.SetWidth(w)
-	boxStyle = boxStyle.Border(lipgloss.RoundedBorder(), false, true, false, true)
-	previewStr := boxStyle.Render(m.preview.View())
+	previewStr := m.preview.View()
 
 	m.help.Styles.ShortKey.Width(w)
-	boxStyle = boxStyle.Border(lipgloss.RoundedBorder(), false, true, true, true).Width(w)
 
-	var helpstr string
+	var helpStr string
+	m.help.Width = w
 	if m.fullHelp {
-		helpstr = m.help.FullHelpView(m.AllKeys())
+		helpStr = m.help.FullHelpView(m.AllKeys())
 	} else {
 		// This is a hack since the current view has too many keys
 		// and the horizontal "ShortHelpView" gets too wide.
 		// "FullHelpView" seperates keys by columns (and we only show the first).
-		// helpstr = m.help.FullHelpView([][]key.Binding{m.AllKeys()[0]})
-		helpstr = m.help.FullHelpView(shortKeys())
+		// helpStr = m.help.FullHelpView([][]key.Binding{m.AllKeys()[0]})
+		helpStr = m.help.FullHelpView(shortKeys())
 	}
-	helpstr = boxStyle.Render(helpstr)
 
-	inputStr := ""
+	var inputStr string
 	if m.input.Focused() {
-		boxStyle = boxStyle.Border(lipgloss.RoundedBorder(), true, true, true, true).Width(w)
-		inputStr = boxStyle.Render(m.input.View())
+		m.input.Width = w - lipgloss.Width(ui.PromptPrefix) - 1
+		inputStr = ui.Style().Boxed.Render(m.input.View())
 	}
 
-	return fmt.Sprintf("%s\n%s\n%s\n%v\n%v\n%v",
-		tabs,
-		pickerView,
+	mainArea := ui.Style().Boxed.Render(strings.Join([]string{
+		pickerStr,
 		previewStr,
-		helpstr,
-		inputStr,
-		m.notices.View(),
-	)
+		helpStr,
+	}, "\n"))
+
+	return strings.Join(
+		[]string{
+			tabStr,
+			mainArea,
+			inputStr,
+			m.notices.View(),
+		}, "\n")
 }
 
 func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
@@ -169,7 +168,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	case tea.KeyMsg:
 
-		if m.input.Focused() {
+		if m.input.Focused() && msg.String() != "ctrl+c" {
 			keys.esc.SetEnabled(true)
 			keys.confirm.SetEnabled(true)
 			if key.Matches(msg, keys.esc) {

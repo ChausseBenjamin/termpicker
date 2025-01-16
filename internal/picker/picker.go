@@ -2,15 +2,13 @@ package picker
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/ChausseBenjamin/termpicker/internal/colors"
 	"github.com/ChausseBenjamin/termpicker/internal/slider"
+	"github.com/ChausseBenjamin/termpicker/internal/ui"
 	"github.com/charmbracelet/bubbles/key"
 	tea "github.com/charmbracelet/bubbletea"
-)
-
-const (
-	activeRune = '>'
 )
 
 type Model struct {
@@ -111,21 +109,24 @@ func (m Model) Init() tea.Cmd {
 	return tea.Batch(cmds...)
 }
 
-func (m Model) View() string {
-	var s string
-
-	carriageReturn := ""
-	for i, slider := range m.sliders {
-		if i > 0 {
-			carriageReturn = "\n"
-		}
-		if i == m.active {
-			s += fmt.Sprintf("%v%c %s", carriageReturn, activeRune, slider.View())
-		} else {
-			s += fmt.Sprintf("%v  %s", carriageReturn, slider.View())
-		}
+func ViewSlider(active bool, s slider.Model) string {
+	if active {
+		return fmt.Sprintf("%s %s",
+			ui.Style().PickerCursor.Render(ui.PickerSelRune),
+			s.View(),
+		)
 	}
-	return s
+	return fmt.Sprintf("  %s",
+		s.View(),
+	)
+}
+
+func (m Model) View() string {
+	sliderList := make([]string, len(m.sliders))
+	for i, slider := range m.sliders {
+		sliderList[i] = ViewSlider(i == m.active, slider)
+	}
+	return strings.Join(sliderList, "\n")
 }
 
 func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {

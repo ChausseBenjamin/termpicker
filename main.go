@@ -1,31 +1,29 @@
 package main
 
 import (
+	"context"
 	"log/slog"
 	"os"
-	"time"
 
 	"github.com/ChausseBenjamin/termpicker/internal/logging"
 	"github.com/ChausseBenjamin/termpicker/internal/switcher"
 	"github.com/ChausseBenjamin/termpicker/internal/util"
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/urfave/cli/v2"
+	"github.com/urfave/cli/v3"
 )
 
-var ( // Set by the build system
-	version = "compiled"
-	date    = ""
-)
+// Set by the build system
+var version = "compiled"
 
-func AppAction(ctx *cli.Context) error {
-	logfile := logging.Setup(ctx.String("logfile"))
+func AppAction(ctx context.Context, cmd *cli.Command) error {
+	logfile := logging.Setup(cmd.String("logfile"))
 	defer logfile.Close()
 
 	slog.Info("Starting Termpicker")
 
 	sw := switcher.New()
 
-	if colorStr := ctx.String("color"); colorStr != "" {
+	if colorStr := cmd.String("color"); colorStr != "" {
 		sw.NewNotice(sw.SetColorFromText(colorStr))
 	}
 
@@ -37,19 +35,16 @@ func AppAction(ctx *cli.Context) error {
 }
 
 func main() {
-	compileDate, _ := time.Parse(time.RFC3339, date)
-	app := &cli.App{
-		Name:   "Termpicker",
-		Usage:  "A terminal-based color picker",
-		Action: AppAction,
-		Authors: []*cli.Author{
-			{Name: "Benjamin Chausse", Email: "benjamin@chausse.xyz"},
-		},
-		Version:  version,
-		Flags:    AppFlags,
-		Compiled: compileDate,
+	app := &cli.Command{
+		Name:                  "Termpicker",
+		Usage:                 "A terminal-based color picker",
+		Action:                AppAction,
+		Authors:               []any{"Benjamin Chausse <benjamin@chausse.xhz>"},
+		Version:               version,
+		Flags:                 AppFlags,
+		EnableShellCompletion: true,
 	}
-	if err := app.Run(os.Args); err != nil {
+	if err := app.Run(context.Background(), os.Args); err != nil {
 		slog.Error("Program crashed", util.ErrKey, err.Error())
 		os.Exit(1)
 	}

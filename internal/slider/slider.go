@@ -2,8 +2,10 @@ package slider
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/ChausseBenjamin/termpicker/internal/progress"
+	"github.com/ChausseBenjamin/termpicker/internal/ui"
 	"github.com/charmbracelet/bubbles/key"
 	tea "github.com/charmbracelet/bubbletea"
 )
@@ -18,10 +20,8 @@ type Model struct {
 
 func New(label byte, maxVal int, opts ...progress.Option) Model {
 	slider := Model{
-		label: label,
-		progress: progress.New(
-			progress.WithoutPercentage(),
-		),
+		label:    label,
+		progress: progress.New(),
 		max:      maxVal,
 		current:  maxVal / 2,
 		mappings: newKeybinds(),
@@ -32,7 +32,7 @@ func New(label byte, maxVal int, opts ...progress.Option) Model {
 	return slider
 }
 
-func (m Model) Title() string { return fmt.Sprintf("%c", m.label) }
+func (m Model) Title() string { return fmt.Sprintf("%c:", m.label) }
 
 func (m Model) Init() tea.Cmd {
 	// Triggering a frame message Update here will force the progress bar to
@@ -79,5 +79,9 @@ func (m Model) ViewValue(current int) string {
 }
 
 func (m Model) View() string {
-	return fmt.Sprintf("%v: %v %v", m.Title(), m.progress.View(), m.ViewValue(m.current))
+	return strings.Join([]string{
+		ui.Style().SliderLabel.Render(m.Title()),
+		m.progress.View(),
+		ui.Style().SliderVal.Render(m.ViewValue(m.current)),
+	}, " ")
 }
