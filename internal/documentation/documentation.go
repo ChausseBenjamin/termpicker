@@ -6,7 +6,7 @@
  * without bloating the final binary. For example,
  * generating bash+zsh auto-completion scripts isn't needed in
  * the final binary if those script are generated before hand.
- * Same gose for manpages. This file is meant to be run automatically
+ * Same goes for manpages. This file is meant to be run automatically
  * to easily package new releases. Same goes for manpages which is the
  * only feature currently in here.
  */
