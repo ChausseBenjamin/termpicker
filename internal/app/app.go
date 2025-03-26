@@ -58,7 +58,7 @@ func Command() *cli.Command {
 		)
 
 		helpRaw, _ := docs.ToMarkdown(cmd)
-		helpCute, _ := glamour.Render(helpRaw, "dark")
+		helpCute, _ := glamour.Render(helpRaw, "auto")
 
 		w.Write([]byte(helpCute))
 	}
