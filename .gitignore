@@ -1,3 +1,5 @@
 *.json
+termpicker
+termpicker.1
 coverage.txt
 dist/
