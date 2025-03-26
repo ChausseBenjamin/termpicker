@@ -12,26 +12,20 @@
  */
 package main
 
+//go:generate go run . > termpicker.1
+
 import (
 	_ "embed"
 	"log/slog"
 	"os"
-	"strings"
 
 	"github.com/ChausseBenjamin/termpicker/internal/app"
 	docs "github.com/urfave/cli-docs/v3"
 )
 
 func main() {
-	a := app.Command()
-
-	docs.MarkdownDocTemplate = strings.Join(
-		[]string{
-			docs.MarkdownDocTemplate,
-			app.KeybindingDocs,
-		},
-		"\n",
-	)
+	// version doesn't show up in the man page...
+	a := app.Command("")
 
 	man, err := docs.ToManWithSection(a, 1)
 	if err != nil {
@@ -40,5 +34,5 @@ func main() {
 		)
 		os.Exit(1)
 	}
-	os.Stdout.Write([]byte(man))
+	os.WriteFile("termpicker.1", []byte(man), 0644)
 }

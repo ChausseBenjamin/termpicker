@@ -8,14 +8,30 @@
 # vim: set ts=2 sw=2 tw=0 fo=cnqoj
 version: 2
 before:
-  hooks: [go mod tidy]
+  hooks: [go mod tidy, go generate ./..., 'echo building {{.Version}}']
+upx:
+  # Whether to enable it or not.
+  - enabled: true
+  # Filter by GOOS.
+    goos: [linux, windows, darwin]
+  # Filter by GOARCH.
+    goarch: [arm, amd64, i386, arm64, aarch64]
+  # Compress argument.
+  # Valid options are from '1' (faster) to '9' (better), and 'best'.
+    compress: best
+  # Whether to try LZMA (slower).
+    lzma: false
 builds:
   - main:
     env: [CGO_ENABLED=0]
-    ldflags: -s -w -X main.version={{.Version}} -X main.commit={{.Commit}} -X main.date={{.Date}}
+    ldflags: -s -w -X main.version={{.Version}}
     goos: [linux, windows, darwin]
 archives:
-  - format: tar.gz
+  - formats: tar.gz
+    files:
+      - LICENSE
+      - src: ./internal/documentation/*.1
+        strip_parent: true
     # this name template makes the OS and Arch compatible with the results of `uname`.
     name_template: >-
       {{ .ProjectName }}_
@@ -27,7 +43,7 @@ archives:
     # use zip for windows archives
     format_overrides:
       - goos: windows
-        format: zip
+        formats: zip
 changelog:
   sort: asc
   filters:

@@ -3,23 +3,16 @@ package app
 import (
 	"context"
 	_ "embed"
-	"fmt"
-	"io"
 	"log/slog"
 
 	"github.com/ChausseBenjamin/termpicker/internal/logging"
 	"github.com/ChausseBenjamin/termpicker/internal/switcher"
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/charmbracelet/glamour"
-	docs "github.com/urfave/cli-docs/v3"
 	"github.com/urfave/cli/v3"
 )
 
-//go:embed keybindings.md
-var KeybindingDocs string
-
-// Set by the build system
-var version = "compiled"
+//go:embed description.txt
+var Desc string
 
 func AppAction(ctx context.Context, cmd *cli.Command) error {
 	logfile := logging.Setup(cmd.String("logfile"))
@@ -40,27 +33,17 @@ func AppAction(ctx context.Context, cmd *cli.Command) error {
 	return nil
 }
 
-func Command() *cli.Command {
+func Command(version string) *cli.Command {
 	cmd := &cli.Command{
 		Name:                  "termpicker",
 		Usage:                 "A terminal-based color picker",
 		Action:                AppAction,
+		ArgsUsage:             "",
+		Description:           Desc,
 		Authors:               []any{"Benjamin Chausse <benjamin@chausse.xyz>"},
 		Version:               version,
 		Flags:                 AppFlags,
 		EnableShellCompletion: true,
-	}
-
-	cli.HelpPrinter = func(w io.Writer, _ string, _ any) {
-		docs.MarkdownDocTemplate = fmt.Sprintf("%s\n‎\n\n%s",
-			docs.MarkdownDocTemplate,
-			KeybindingDocs,
-		)
-
-		helpRaw, _ := docs.ToMarkdown(cmd)
-		helpCute, _ := glamour.Render(helpRaw, "auto")
-
-		w.Write([]byte(helpCute))
 	}
 
 	return cmd
