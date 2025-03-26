@@ -1,7 +1,7 @@
 /*
  * This package isn't the actual termpicker app.
  * To avoid importing packages which aren't needed at runtime,
- * some auto-generation functionnalities is offloaded to here so
+ * some auto-generation functionalities is offloaded to here so
  * it can be done with access to the rest of the code-base but
  * without bloating the final binary. For example,
  * generating bash+zsh auto-completion scripts isn't needed in
