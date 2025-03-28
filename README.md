@@ -12,7 +12,7 @@ Here is a quick demo of what has been done so far:
 - Preview any color using a truecolor terminal
 - Create colors using sliders for RGB, HSL, and CMYK
 - Seamlessly convert between color formats (RGB, HSL, CMYK) as you create
-- Copy the color to your clipboard in various formats (RGB, HEX, HSL, CMYK)
+- Copy the color to your clipboard in various formats ([RGB][4], [HEX][5], [HSL][6], [CMYK][7], [ANSI truecolor][8])
 
 ## Usage:
 
@@ -54,3 +54,8 @@ install to your `$XDG_DATA_HOME/man/man1/`.
 [1]: https://github.com/charmbracelet/lipgloss
 [2]: https://github.com/charmbracelet/soft-serve
 [3]: https://github.com/charmbracelet/bubbles#help
+[4]: https://www.w3schools.com/colors/colors_rgb.asp
+[5]: https://www.w3schools.com/colors/colors_hexadecimal.asp
+[6]: https://www.w3schools.com/colors/colors_hsl.asp
+[7]: https://www.w3schools.com/colors/colors_cmyk.asp
+[8]: https://gist.github.com/fnky/458719343aabd01cfb17a3a4f7296797#rgb-colors
