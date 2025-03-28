@@ -16,34 +16,38 @@ Here is a quick demo of what has been done so far:
 
 ## Usage:
 
-The keybindings are pretty simple and shown in the UI. For a more exhaustive
-list, pressing `?` expands the help section to show all available keybindings.
+The keybindings are pretty simple and shown in the UI. Their description can
+be expanded by pressing the `?` key. The exhaustive list is available if you
+RTFM :P (either `termpicker --help` or `man termpicker` if the manpage is
+installed)
 
 ## Installation
 
-Just grab the latest release for your platform and install the binary
-somewhere in your `PATH`.
+**Via Go**:
 
-Alternatively, you can install it directly from go with:
 ```sh
 go install github.com/ChausseBenjamin/termpicker@latest
 ```
 
+**From the aur***:
+Termpicker is on the AUR! :tada: Just install it with you favourite
+aur package manager (yay, paru, yaourt, etc...)
+
+```sh
+yay -S termpicker
+```
+
+**Manual Installation**:
+Just grab the latest release for your platform and install the binary
+somewhere in your `PATH`. Releases also include a manpage which you can
+install to your `$XDG_DATA_HOME/man/man1/`.
+
 ## Roadmap
 
-- [ ] Refactor the code to streamline and centralize lipgloss styles
+- [ ] Publish release to more mainstream repositories (Homebrew, nix, etc...)
 - [ ] Unit-test color conversions near edge case colors
+- [ ] Migrate to bubbletea/V2 once it comes out of beta
 - [ ] Warn the user if the terminal is too small (and refuse to render)
-- [ ] Publish release to mainstream repositories (AUR, Homebrew, etc...)
-- [x] Add a "cmd" mode to manually input colors
-- [x] Add a [help bubble][3] at the bottom of the interface to show available keybindings
-- [x] Add an input flag to pass specific color as a starting value
-- [x] Add Box-drawing to the picker and the previewer
-- [x] Implement copying to clipboard for various formats (rgb, hex, hsl, cymk, etc...)
-- [X] Make sliders reach the correct length on init/tab without pressing `j`,`k`
-- [x] Make the preview windows prettier (perhaps same width as the sliders)
-- [x] Make the tabs interface prettier with [lipgloss][1] (similar to tabs in [soft-serve][2])
-- [x] Notify user of successful copy to clipboard (or failure)
 
 [1]: https://github.com/charmbracelet/lipgloss
 [2]: https://github.com/charmbracelet/soft-serve
