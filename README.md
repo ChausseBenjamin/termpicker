@@ -29,7 +29,8 @@ installed)
 go install github.com/ChausseBenjamin/termpicker@latest
 ```
 
-**From the aur***:
+**From the aur**:
+
 Termpicker is on the AUR! :tada: Just install it with you favourite
 aur package manager (yay, paru, yaourt, etc...)
 
@@ -38,6 +39,7 @@ yay -S termpicker
 ```
 
 **Manual Installation**:
+
 Just grab the latest release for your platform and install the binary
 somewhere in your `PATH`. Releases also include a manpage which you can
 install to your `$XDG_DATA_HOME/man/man1/`.
