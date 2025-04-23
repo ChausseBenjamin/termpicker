@@ -49,7 +49,7 @@ install to your `$XDG_DATA_HOME/man/man1/`.
 - [ ] Publish release to more mainstream repositories (Homebrew, nix, etc...)
 - [ ] Unit-test color conversions near edge case colors
 - [ ] Migrate to bubbletea/V2 once it comes out of beta
-- [ ] Warn the user if the terminal is too small (and refuse to render)
+- [X] Warn the user if the terminal is too small (and refuse to render)
 
 [1]: https://github.com/charmbracelet/lipgloss
 [2]: https://github.com/charmbracelet/soft-serve
