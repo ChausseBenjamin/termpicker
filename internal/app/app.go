@@ -26,7 +26,7 @@ func AppAction(ctx context.Context, cmd *cli.Command) error {
 		sw.NewNotice(sw.SetColorFromText(colorStr))
 	}
 
-	p := tea.NewProgram(sw)
+	p := tea.NewProgram(sw, tea.WithAltScreen())
 	if _, err := p.Run(); err != nil {
 		return err
 	}
