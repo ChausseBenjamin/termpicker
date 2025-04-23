@@ -10,12 +10,13 @@ import (
 	"github.com/ChausseBenjamin/termpicker/internal/picker"
 	"github.com/ChausseBenjamin/termpicker/internal/preview"
 	"github.com/ChausseBenjamin/termpicker/internal/quit"
+	"github.com/ChausseBenjamin/termpicker/internal/toosmall"
 	"github.com/ChausseBenjamin/termpicker/internal/ui"
 	"github.com/charmbracelet/bubbles/help"
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/charmbracelet/lipgloss"
+	lg "github.com/charmbracelet/lipgloss"
 )
 
 const (
@@ -116,7 +117,7 @@ func (m Model) View() string {
 	}, " ")
 
 	pickerStr := m.pickers[m.active].View()
-	w := lipgloss.Width(pickerStr)
+	w := lg.Width(pickerStr)
 
 	m.preview.SetWidth(w)
 	previewStr := m.preview.View()
@@ -137,7 +138,7 @@ func (m Model) View() string {
 
 	var inputStr string
 	if m.input.Focused() {
-		m.input.Width = w - lipgloss.Width(ui.PromptPrefix) - 1
+		m.input.Width = w - lg.Width(ui.PromptPrefix) - 1
 		inputStr = ui.Style().Boxed.Render(m.input.View())
 	}
 
@@ -156,6 +157,10 @@ func (m Model) View() string {
 		}, "\n")
 }
 
+func (m Model) Fits(s tea.WindowSizeMsg) bool {
+	return s.Width >= lg.Width(m.View()) && s.Height >= lg.Height(m.View())
+}
+
 func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	keys := newKeybinds()
 	cmds := []tea.Cmd{}
@@ -165,6 +170,12 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		newNotices, cmd := m.notices.Update(msg)
 		m.notices = newNotices.(notices.Model)
 		cmds = append(cmds, cmd)
+
+	case tea.WindowSizeMsg:
+		if !m.Fits(msg) {
+			smol := toosmall.New(m)
+			return smol.Update(msg)
+		}
 
 	case tea.KeyMsg:
 
