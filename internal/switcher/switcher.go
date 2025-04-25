@@ -21,8 +21,8 @@ import (
 
 const (
 	IndexRgb int = iota
-	IndexCmyk
 	IndexHsl
+	IndexCmyk
 )
 
 type Model struct {
@@ -38,8 +38,8 @@ type Model struct {
 func New() Model {
 	pickers := []picker.Model{ // Order MUST match the Index* constants
 		*picker.RGB(),
-		*picker.CMYK(),
 		*picker.HSL(),
+		*picker.CMYK(),
 	}
 
 	input := textinput.New()
