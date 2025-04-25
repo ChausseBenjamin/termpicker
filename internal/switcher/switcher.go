@@ -173,6 +173,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	case tea.WindowSizeMsg:
 		if !m.Fits(msg) {
+			m.notices.Notices = make(map[string]string)
 			smol := toosmall.New(m)
 			return smol.Update(msg)
 		}
