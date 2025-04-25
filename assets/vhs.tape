@@ -3,12 +3,11 @@ Output ./assets/demo.gif
 Require termpicker
 
 Set Framerate 60
-Set Width 850
-Set Height 600
+Set Width 950
+Set Height 550
 
 Set FontSize 18
-Set Margin 15
-Set MarginFill "#6F4624"
+Set Margin 0
 Set BorderRadius 10
 
 Type "termpicker"
