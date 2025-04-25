@@ -13,19 +13,17 @@ func newKeybinds() keybinds {
 	return keybinds{
 		incRegular: key.NewBinding(
 			key.WithKeys("right", "l"),
-			key.WithHelp("l", "inc. (coarse)"),
 		),
 		decRegular: key.NewBinding(
 			key.WithKeys("left", "h"),
-			key.WithHelp("h", "dec. (coarse)"),
+			key.WithHelp("h/l", "Dec./Inc. 5%"),
 		),
 		incPrecise: key.NewBinding(
 			key.WithKeys("shift+right", "L"),
-			key.WithHelp("L", "inc. (fine)"),
 		),
 		decPrecise: key.NewBinding(
 			key.WithKeys("shift+left", "H"),
-			key.WithHelp("H", "dec. (fine)"),
+			key.WithHelp("H/L", "Dec./Inc. (fine)"),
 		),
 	}
 }
@@ -47,5 +45,6 @@ func Keys() []key.Binding {
 // and all of its active children. The parent
 // can use this to generate help text.
 func (m Model) AllKeys() [][]key.Binding {
-	return [][]key.Binding{Keys()}
+	k := newKeybinds()
+	return [][]key.Binding{{k.decRegular, k.decPrecise}}
 }

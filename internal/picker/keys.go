@@ -28,7 +28,6 @@ func Keys() []key.Binding {
 
 func (m Model) AllKeys() [][]key.Binding {
 	keys := make([][]key.Binding, len(m.sliders[m.active].AllKeys())+1)
-	keys[0] = Keys()
-	copy(keys[1:], m.sliders[m.active].AllKeys())
+	keys[0] = append(Keys(), m.sliders[m.active].AllKeys()[0]...)
 	return keys
 }
