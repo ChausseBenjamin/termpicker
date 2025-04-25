@@ -16,7 +16,7 @@ const (
 )
 
 type keybinds struct {
-	next, prev, copy, help, insert, esc, confirm, quit key.Binding
+	next, prev, copy, help, insert, esc, confirm, suspend, quit key.Binding
 }
 
 func newKeybinds() keybinds {
@@ -55,6 +55,9 @@ func newKeybinds() keybinds {
 			key.WithHelp("enter", "confirm manual input"),
 			key.WithDisabled(),
 		),
+		suspend: key.NewBinding(
+			key.WithKeys("ctrl+z"),
+		),
 		quit: key.NewBinding(
 			key.WithKeys("q", "ctrl+c"),
 			key.WithHelp("q", "quit"),
@@ -71,7 +74,7 @@ func shortKeys() [][]key.Binding {
 	keys := make([][]key.Binding, 2)
 	rows := 2
 	cRow := 0
-	for i := 0; i < len(Keys()); i++ {
+	for i := range Keys() {
 		keys[cRow] = append(keys[cRow], Keys()[i])
 		cRow++
 		if cRow == rows {
@@ -86,5 +89,4 @@ func (m Model) AllKeys() [][]key.Binding {
 	keys[0] = Keys()
 	copy(keys[1:], m.pickers[m.active].AllKeys())
 	return keys
-	// return append(m.pickers[m.active].AllKeys(), Keys())
 }
