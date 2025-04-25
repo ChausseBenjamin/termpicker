@@ -34,6 +34,13 @@ func (m Model) View() string {
 
 func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
+	case tea.KeyMsg:
+		switch msg.String() {
+		case "ctrl+c", "q":
+			return m, tea.Quit
+		case "ctrl+z":
+			return m, tea.Suspend
+		}
 	case tea.WindowSizeMsg:
 		if msg.Height >= m.parentHeight() && msg.Width >= m.parentWidth() {
 			return m.parent.Update(msg)
