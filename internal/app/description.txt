@@ -18,6 +18,6 @@ Insert mode:
 	the following formats will be used as a color input when pressing enter:
 
 	- Hex:   #rrggbb
-	- RGB:   rgb( r, g, b)
+	- RGB:   rgb(r, g, b)
 	- CMYK:  cmyk(c, m, y, k)
 	- HSL:   hsl(h, s, l)
