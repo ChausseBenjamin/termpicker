@@ -220,6 +220,9 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			cmd := m.input.Focus()
 			cmds = append(cmds, cmd)
 
+		case key.Matches(msg, keys.suspend):
+			return m, tea.Suspend
+
 		case key.Matches(msg, keys.quit):
 			return quit.Model{}, tea.Quit
 
