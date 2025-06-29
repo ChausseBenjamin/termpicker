@@ -15,7 +15,7 @@ import (
 var Desc string
 
 func AppAction(ctx context.Context, cmd *cli.Command) error {
-	logfile := logging.Setup(cmd.String("logfile"))
+	logfile := logging.Setup(cmd.String(flagLogfile))
 	defer logfile.Close()
 
 	slog.Info("Starting Termpicker")

@@ -3,7 +3,7 @@ package app
 import "github.com/urfave/cli/v3"
 
 const (
-	flagLogfile = "log-file"
+	flagLogfile   = "log-file"
 )
 
 var AppFlags []cli.Flag = []cli.Flag{
