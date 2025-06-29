@@ -28,10 +28,10 @@ const (
 type Model struct {
 	active   int
 	pickers  []picker.Model
-	preview  preview.Model
+	prev     preview.Model
 	help     help.Model
 	input    textinput.Model
-	notices  notices.Model
+	notice   notices.Model
 	fullHelp bool // When false, only show help for the switcher (not children)
 }
 
@@ -51,10 +51,10 @@ func New() Model {
 	return Model{
 		active:   0,
 		pickers:  pickers,
-		preview:  *preview.New(colors.Hex(pickers[0].GetColor())),
+		prev:     *preview.New(colors.Hex(pickers[0].GetColor())),
 		help:     help.New(),
 		input:    input,
-		notices:  notices.New(),
+		notice:   notices.New(),
 		fullHelp: false,
 	}
 }
@@ -82,8 +82,13 @@ func (m *Model) UpdatePicker(i int, c colors.ColorSpace) {
 	m.pickers[i].SetColor(c)
 }
 
+func (m *Model) UpdatePreview(cfg preview.Config) {
+	newPrev, _ := m.prev.Update(cfg)
+	m.prev = newPrev.(preview.Model)
+}
+
 func (m *Model) NewNotice(msg string) tea.Cmd {
-	return m.notices.New(msg)
+	return m.notice.New(msg)
 }
 
 func (m Model) Init() tea.Cmd {
@@ -91,8 +96,8 @@ func (m Model) Init() tea.Cmd {
 
 	// The NoticeExpiryMsg is never sent to bubbletea by a tea.Cmd for the initial notices
 	// That's why we need to manually reset them here. Otherwise, they would never expire.
-	for k := range m.notices.Notices {
-		cmds = append(cmds, m.notices.Reset(k))
+	for k := range m.notice.Notices {
+		cmds = append(cmds, m.notice.Reset(k))
 	}
 
 	for _, p := range m.pickers {
@@ -119,8 +124,8 @@ func (m Model) View() string {
 	pickerStr := m.pickers[m.active].View()
 	w := lg.Width(pickerStr)
 
-	m.preview.SetWidth(w)
-	previewStr := m.preview.View()
+	m.prev.SetWidth(w)
+	previewStr := m.prev.View()
 
 	m.help.Styles.ShortKey.Width(w)
 
@@ -153,7 +158,7 @@ func (m Model) View() string {
 			tabStr,
 			mainArea,
 			inputStr,
-			m.notices.View(),
+			m.notice.View(),
 		}, "\n")
 }
 
@@ -164,19 +169,24 @@ func (m Model) Fits(s tea.WindowSizeMsg) bool {
 func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	keys := newKeybinds()
 	cmds := []tea.Cmd{}
-	slog.Info("Received tea.Msg", "tea_msg", msg, "type", fmt.Sprintf("%T", msg))
+	slog.Debug("Received tea.Msg", "tea_msg", msg, "type", fmt.Sprintf("%T", msg))
 	switch msg := msg.(type) {
 	case notices.NoticeExpiryMsg:
-		newNotices, cmd := m.notices.Update(msg)
-		m.notices = newNotices.(notices.Model)
+		newNotices, cmd := m.notice.Update(msg)
+		m.notice = newNotices.(notices.Model)
 		cmds = append(cmds, cmd)
 
 	case tea.WindowSizeMsg:
 		if !m.Fits(msg) {
-			m.notices.Notices = make(map[string]string)
+			m.notice.Notices = make(map[string]string)
 			smol := toosmall.New(m)
 			return smol.Update(msg)
 		}
+
+	case preview.Config:
+		newPreview, cmd := m.prev.Update(msg)
+		cmds = append(cmds, cmd)
+		m.prev = newPreview.(preview.Model)
 
 	case tea.KeyMsg:
 
@@ -211,7 +221,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.pickers[m.active].SetColor(cs)
 
 		case key.Matches(msg, keys.copy):
-			cmd := m.notices.New(m.copyColor(msg.String()))
+			cmd := m.notice.New(m.copyColor(msg.String()))
 			cmds = append(cmds, cmd)
 
 		case key.Matches(msg, keys.help):
@@ -233,11 +243,12 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.pickers[m.active] = newActive.(picker.Model)
 			cmds = append(cmds, cmd)
 			// Update the preview
-			newPreview := preview.New(colors.Hex(m.pickers[m.active].GetColor()))
-			m.preview = *newPreview
+			newPreview, cmd := m.prev.Update(m.pickers[m.active].GetColor())
+			cmds = append(cmds, cmd)
+			m.prev = newPreview.(preview.Model)
 
-			newNotices, cmd := m.notices.Update(msg)
-			m.notices = newNotices.(notices.Model)
+			newNotices, cmd := m.notice.Update(msg)
+			m.notice = newNotices.(notices.Model)
 			cmds = append(cmds, cmd)
 			return m, tea.Batch(cmds...)
 		}
@@ -249,7 +260,8 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		cmds = append(cmds, cmd)
 	}
 	// Update the preview
-	newPreview := preview.New(colors.Hex(m.pickers[m.active].GetColor()))
-	m.preview = *newPreview
+	newPreview, cmd := m.prev.Update(m.pickers[m.active].GetColor())
+	cmds = append(cmds, cmd)
+	m.prev = newPreview.(preview.Model)
 	return m, tea.Batch(cmds...)
 }
