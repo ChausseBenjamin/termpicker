@@ -11,7 +11,6 @@ import (
 )
 
 const (
-	// runeBlock     = "█"
 	runeBlock     = " "
 	defaultHeight = 5
 	defaultWidth  = 78
