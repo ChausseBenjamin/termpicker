@@ -1,17 +1,18 @@
 package util
 
 import (
+	"encoding/base64"
 	"fmt"
 	"log/slog"
-
-	"github.com/atotto/clipboard"
+	"os"
 )
 
-// Copies any object that has the Stringer interface to the clipboard
 func Copy(str string) string {
-	if err := clipboard.WriteAll(str); err != nil {
-		slog.Error("Unable to copy item", "item", str, ErrKey, err)
-		return fmt.Sprintf("Failed to copy '%v': No compatible clipboard found...", str)
+	osc52 := fmt.Sprintf("\033]52;c;%s\a", base64.StdEncoding.EncodeToString([]byte(str)))
+	_, err := os.Stdout.WriteString(osc52)
+	if err != nil {
+		slog.Error("OSC52 write failed", "item", str, ErrKey, err)
+		return fmt.Sprintf("Failed to copy '%s': OSC52 failed", str)
 	}
-	return fmt.Sprintf("Copied %s to clipboard!", str)
+	return fmt.Sprintf("Copied '%s' using OSC52", str)
 }
