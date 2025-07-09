@@ -27,7 +27,7 @@ var AppFlags []cli.Flag = []cli.Flag{
 	},
 	&cli.StringFlag{
 		Name:    flagSampleStr,
-		Usage:   "Text to preview colors as a foreground/background",
+		Usage:   "Text to preview colors as a foreground/background (setting this to an empty string \"\" will disable this feature)",
 		Sources: cli.EnvVars("TERMPICKER_PREVIEW_STRING"),
 		Aliases: []string{"t"},
 		Value:   "The quick brown fox jump over the lazy dog",
