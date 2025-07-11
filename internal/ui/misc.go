@@ -1,16 +1,6 @@
 package ui
 
-import (
-	lg "github.com/charmbracelet/lipgloss"
-	"github.com/muesli/termenv"
-)
-
-func ColorProfile() termenv.Profile {
-	return termenv.TrueColor
-}
-
 func init() {
-	r := lg.DefaultRenderer()
-	r.SetColorProfile(ColorProfile())
-	lg.SetDefaultRenderer(r)
+	// In v2, renderer setup is different
+	// We don't need to configure the renderer here as it's handled by the library
 }

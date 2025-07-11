@@ -2,7 +2,7 @@ package ui
 
 import (
 	"github.com/ChausseBenjamin/termpicker/internal/progress"
-	lg "github.com/charmbracelet/lipgloss"
+	lg "github.com/charmbracelet/lipgloss/v2"
 )
 
 const (
@@ -58,7 +58,6 @@ func init() {
 		Foreground(lg.Color(textNorm))
 
 	baseSliderOpts := []progress.Option{
-		progress.WithColorProfile(ColorProfile()),
 		progress.WithoutPercentage(),
 		// progress.WithBinaryFill(), // uncomment for legacy look
 	}
@@ -112,7 +111,7 @@ func init() {
 			C: append(baseSliderOpts, progress.WithGradient("#006666", "#00ffff")),
 			M: append(baseSliderOpts, progress.WithGradient("#660066", "#ff00ff")),
 			Y: append(baseSliderOpts, progress.WithGradient("#666600", "#ffff00")),
-			K: append(baseSliderOpts, progress.WithSolidFill("#000000")),
+			K: append(baseSliderOpts, progress.WithSolidFill(lg.Color("#000000"))),
 
 			// HSL
 			H: append(baseSliderOpts, progress.WithDefaultGradient()),

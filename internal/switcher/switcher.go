@@ -12,11 +12,11 @@ import (
 	"github.com/ChausseBenjamin/termpicker/internal/quit"
 	"github.com/ChausseBenjamin/termpicker/internal/toosmall"
 	"github.com/ChausseBenjamin/termpicker/internal/ui"
-	"github.com/charmbracelet/bubbles/help"
-	"github.com/charmbracelet/bubbles/key"
-	"github.com/charmbracelet/bubbles/textinput"
-	tea "github.com/charmbracelet/bubbletea"
-	lg "github.com/charmbracelet/lipgloss"
+	"github.com/charmbracelet/bubbles/v2/help"
+	"github.com/charmbracelet/bubbles/v2/key"
+	"github.com/charmbracelet/bubbles/v2/textinput"
+	tea "github.com/charmbracelet/bubbletea/v2"
+	lg "github.com/charmbracelet/lipgloss/v2"
 )
 
 const (
@@ -43,8 +43,6 @@ func New() Model {
 	}
 
 	input := textinput.New()
-	input.PromptStyle = ui.Style().InputPrompt
-	input.TextStyle = ui.Style().InputText
 	input.Prompt = ui.PromptPrefix
 	input.Placeholder = ui.PromptPlaceholder
 
@@ -143,7 +141,7 @@ func (m Model) View() string {
 
 	var inputStr string
 	if m.input.Focused() {
-		m.input.Width = w - lg.Width(ui.PromptPrefix) - 1
+		m.input.SetWidth(w - lg.Width(ui.PromptPrefix) - 1)
 		inputStr = ui.Style().Boxed.Render(m.input.View())
 	}
 

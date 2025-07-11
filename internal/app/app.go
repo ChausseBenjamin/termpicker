@@ -12,7 +12,8 @@ import (
 	"github.com/ChausseBenjamin/termpicker/internal/parse"
 	"github.com/ChausseBenjamin/termpicker/internal/preview"
 	"github.com/ChausseBenjamin/termpicker/internal/switcher"
-	tea "github.com/charmbracelet/bubbletea"
+	tea "github.com/charmbracelet/bubbletea/v2"
+	"github.com/charmbracelet/colorprofile"
 	"github.com/urfave/cli/v3"
 )
 
@@ -52,7 +53,10 @@ func AppAction(ctx context.Context, cmd *cli.Command) error {
 	}
 	sw.UpdatePreview(cfg)
 
-	p := tea.NewProgram(sw, tea.WithAltScreen())
+	p := tea.NewProgram(sw,
+		tea.WithAltScreen(),
+		tea.WithColorProfile(colorprofile.TrueColor),
+	)
 	if _, err := p.Run(); err != nil {
 		return err
 	}

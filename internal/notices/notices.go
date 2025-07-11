@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/ChausseBenjamin/termpicker/internal/util"
-	tea "github.com/charmbracelet/bubbletea"
+	tea "github.com/charmbracelet/bubbletea/v2"
 	"github.com/hashicorp/go-uuid"
 )
 

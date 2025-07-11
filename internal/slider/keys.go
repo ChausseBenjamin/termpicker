@@ -1,6 +1,6 @@
 package slider
 
-import "github.com/charmbracelet/bubbles/key"
+import "github.com/charmbracelet/bubbles/v2/key"
 
 type keybinds struct {
 	incRegular key.Binding

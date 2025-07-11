@@ -5,8 +5,8 @@ import (
 	"strings"
 
 	"github.com/ChausseBenjamin/termpicker/internal/ui"
-	tea "github.com/charmbracelet/bubbletea"
-	lg "github.com/charmbracelet/lipgloss"
+	tea "github.com/charmbracelet/bubbletea/v2"
+	lg "github.com/charmbracelet/lipgloss/v2"
 )
 
 type Model struct {
@@ -52,9 +52,17 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (m Model) parentWidth() int {
-	return lg.Width(m.parent.View())
+	// In v2, we need to handle the ViewModel interface
+	if vm, ok := m.parent.(tea.ViewModel); ok {
+		return lg.Width(vm.View())
+	}
+	return 0
 }
 
 func (m Model) parentHeight() int {
-	return lg.Height(m.parent.View())
+	// In v2, we need to handle the ViewModel interface
+	if vm, ok := m.parent.(tea.ViewModel); ok {
+		return lg.Height(vm.View())
+	}
+	return 0
 }

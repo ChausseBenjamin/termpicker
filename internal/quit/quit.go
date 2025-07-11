@@ -2,7 +2,7 @@ package quit
 
 import (
 	"github.com/ChausseBenjamin/termpicker/internal/ui"
-	tea "github.com/charmbracelet/bubbletea"
+	tea "github.com/charmbracelet/bubbletea/v2"
 )
 
 const byeMsg = "Goodbye!\n"
