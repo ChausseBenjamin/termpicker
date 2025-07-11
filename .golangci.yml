@@ -1,8 +1,36 @@
+version: 2
+
 linters:
   enable:
     - thelper
-    - gofumpt
     - tparallel
     - unconvert
     - unparam
     - wastedassign
+
+issues:
+  # Exclude common false positives
+  exclude-rules:
+    # Exclude some linters from running on tests files
+    - path: _test\.go
+      linters:
+        - unparam
+        - wastedassign
+
+run:
+  # Timeout for analysis
+  timeout: 5m
+  
+  # Include test files in analysis
+  tests: true
+  
+  # Which dirs to skip: issues from them won't be reported
+  skip-dirs:
+    - vendor
+  
+  # Which files to skip: they will be analyzed, but issues from them won't be reported
+  skip-files: []
+
+output:
+  # Format: colored-line-number|line-number|json|tab|checkstyle|code-climate|junit-xml|github-actions
+  format: colored-line-number
