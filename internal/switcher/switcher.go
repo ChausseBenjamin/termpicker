@@ -12,6 +12,7 @@ import (
 	"github.com/ChausseBenjamin/termpicker/internal/quit"
 	"github.com/ChausseBenjamin/termpicker/internal/toosmall"
 	"github.com/ChausseBenjamin/termpicker/internal/ui"
+	"github.com/ChausseBenjamin/termpicker/internal/util"
 	"github.com/charmbracelet/bubbles/v2/help"
 	"github.com/charmbracelet/bubbles/v2/key"
 	"github.com/charmbracelet/bubbles/v2/textinput"
@@ -91,6 +92,9 @@ func (m *Model) NewNotice(msg string) tea.Cmd {
 
 func (m Model) Init() tea.Cmd {
 	cmds := []tea.Cmd{}
+
+	// Initialize clipboard system with terminal version query
+	cmds = append(cmds, util.InitClipboard())
 
 	// The NoticeExpiryMsg is never sent to bubbletea by a tea.Cmd for the initial notices
 	// That's why we need to manually reset them here. Otherwise, they would never expire.
@@ -219,7 +223,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.pickers[m.active].SetColor(cs)
 
 		case key.Matches(msg, keys.copy):
-			cmd := m.notice.New(m.copyColor(msg.String()))
+			cmd := m.copyColor(msg.String())
 			cmds = append(cmds, cmd)
 
 		case key.Matches(msg, keys.help):
@@ -235,21 +239,35 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case key.Matches(msg, keys.quit):
 			return quit.Model{}, tea.Quit
 
-		default:
-			// Update the picker
+		default: // Update the picker
 			newActive, cmd := m.pickers[m.active].Update(msg)
 			m.pickers[m.active] = newActive.(picker.Model)
 			cmds = append(cmds, cmd)
-			// Update the preview
-			newPreview, cmd := m.prev.Update(m.pickers[m.active].GetColor())
-			cmds = append(cmds, cmd)
-			m.prev = newPreview.(preview.Model)
-
-			newNotices, cmd := m.notice.Update(msg)
-			m.notice = newNotices.(notices.Model)
-			cmds = append(cmds, cmd)
 			return m, tea.Batch(cmds...)
 		}
+
+	case tea.TerminalVersionMsg:
+		// Handle terminal version for clipboard decisions
+		util.HandleTerminalVersion(string(msg))
+
+	case util.ClipboardResultMsg:
+		// Handle clipboard operation results
+		if msg.Success {
+			// Show success message
+			cmd := m.notice.New(msg.Message)
+			cmds = append(cmds, cmd)
+
+			// Show warning if fallback was used
+			if msg.UsedFallback {
+				warningCmd := m.notice.New(util.CopyWarningMessage(msg.FallbackReason))
+				cmds = append(cmds, warningCmd)
+			}
+		} else {
+			// Show error message
+			cmd := m.notice.New(msg.Message)
+			cmds = append(cmds, cmd)
+		}
+
 	default:
 	}
 	for i, p := range m.pickers {

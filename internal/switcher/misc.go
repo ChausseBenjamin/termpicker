@@ -6,29 +6,39 @@ import (
 	"github.com/ChausseBenjamin/termpicker/internal/colors"
 	"github.com/ChausseBenjamin/termpicker/internal/parse"
 	"github.com/ChausseBenjamin/termpicker/internal/util"
+	tea "github.com/charmbracelet/bubbletea/v2"
 )
 
-func (m Model) copyColor(format string) string {
+func (m Model) copyColor(format string) tea.Cmd {
 	pc := m.pickers[m.active].GetColor().ToPrecise()
+	var colorStr string
+
 	switch format {
 	case cpHex:
-		return util.Copy(colors.Hex(m.pickers[m.active].GetColor()))
+		colorStr = colors.Hex(m.pickers[m.active].GetColor())
 	case cpRGB:
 		rgb := colors.RGB{}.FromPrecise(pc).(colors.RGB)
-		return util.Copy(rgb.String())
+		colorStr = rgb.String()
 	case cpHSL:
 		hsl := colors.HSL{}.FromPrecise(pc).(colors.HSL)
-		return util.Copy(hsl.String())
+		colorStr = hsl.String()
 	case cpCMYK:
 		cmyk := colors.CMYK{}.FromPrecise(pc).(colors.CMYK)
-		return util.Copy(cmyk.String())
+		colorStr = cmyk.String()
 	case cpEscFG:
-		return util.Copy(colors.EscapedSeq(m.pickers[m.active].GetColor(), true))
+		colorStr = colors.EscapedSeq(m.pickers[m.active].GetColor(), true)
 	case cpEscBG:
-		return util.Copy(colors.EscapedSeq(m.pickers[m.active].GetColor(), false))
+		colorStr = colors.EscapedSeq(m.pickers[m.active].GetColor(), false)
 	default:
-		return "Copy format not supported"
+		return func() tea.Msg {
+			return util.ClipboardResultMsg{
+				Success: false,
+				Message: "Copy format not supported",
+			}
+		}
 	}
+
+	return util.SmartCopyToClipboard(colorStr)
 }
 
 func (m *Model) SetColorFromText(colorStr string) string {
