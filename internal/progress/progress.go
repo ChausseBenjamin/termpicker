@@ -379,22 +379,58 @@ func (m Model) barView(b *strings.Builder, percent float64, textWidth int) {
 			// Filled cell: calculate the closest FillStep
 			step := interpolateFillStep(m.FillSteps, fw-float64(i))
 
-			// Use new gradient function interface
-			if m.useGradientFunc {
-				current := float64(i) / float64(tw)
-				c := m.gradientFunc(percent, current)
-				b.WriteString(lipgloss.NewStyle().Foreground(c).Render(string(step.rune)))
-			} else if m.useRamp {
-				// Legacy gradient support
-				p := float64(i) / float64(tw-1)
-				if m.scaleRamp {
-					p = float64(i) / float64(tw-1)
+			// For full blocks, use half-block technique for smoother gradients
+			if step.rune == '█' {
+				// Use half-block character with foreground and background colors
+				// for 2x resolution gradient effect
+				leftPos := float64(i) / float64(tw)
+				rightPos := float64(i) + 0.5
+				if rightPos < float64(tw) {
+					rightPos = rightPos / float64(tw)
+				} else {
+					rightPos = leftPos
 				}
-				c := m.rampColorA.BlendLuv(m.rampColorB, p)
-				b.WriteString(lipgloss.NewStyle().Foreground(c).Render(string(step.rune)))
+
+				var leftColor, rightColor color.Color
+				if m.useGradientFunc {
+					leftColor = m.gradientFunc(percent, leftPos)
+					rightColor = m.gradientFunc(percent, rightPos)
+				} else if m.useRamp {
+					// Legacy gradient support
+					p1 := leftPos
+					p2 := rightPos
+					if m.scaleRamp {
+						p1 = leftPos
+						p2 = rightPos
+					}
+					leftColor = m.rampColorA.BlendLuv(m.rampColorB, p1)
+					rightColor = m.rampColorA.BlendLuv(m.rampColorB, p2)
+				} else {
+					// Legacy solid color support
+					leftColor = m.FullColor
+					rightColor = m.FullColor
+				}
+
+				// Use half-block character: foreground = left half, background = right half
+				b.WriteString(lipgloss.NewStyle().Foreground(leftColor).Background(rightColor).Render("▌"))
 			} else {
-				// Legacy solid color support
-				b.WriteString(lipgloss.NewStyle().Foreground(m.FullColor).Render(string(step.rune)))
+				// For edge blocks (using the eights), keep original logic
+				if m.useGradientFunc {
+					current := float64(i) / float64(tw)
+					c := m.gradientFunc(percent, current)
+					b.WriteString(lipgloss.NewStyle().Foreground(c).Render(string(step.rune)))
+				} else if m.useRamp {
+					// Legacy gradient support
+					p := float64(i) / float64(tw-1)
+					if m.scaleRamp {
+						p = float64(i) / float64(tw-1)
+					}
+					c := m.rampColorA.BlendLuv(m.rampColorB, p)
+					b.WriteString(lipgloss.NewStyle().Foreground(c).Render(string(step.rune)))
+				} else {
+					// Legacy solid color support
+					b.WriteString(lipgloss.NewStyle().Foreground(m.FullColor).Render(string(step.rune)))
+				}
 			}
 		} else {
 			// Empty cell - always use static color, no gradient
