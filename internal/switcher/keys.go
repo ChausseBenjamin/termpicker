@@ -11,6 +11,7 @@ const (
 	cpRGB   = "r"
 	cpHSL   = "s"
 	cpCMYK  = "c"
+	cpOKLCH = "o"
 	cpEscFG = "f"
 	cpEscBG = "b"
 )
@@ -20,7 +21,7 @@ type keybinds struct {
 }
 
 func newKeybinds() keybinds {
-	cpKeys := []string{cpHex, cpRGB, cpHSL, cpCMYK, cpEscBG, cpEscFG}
+	cpKeys := []string{cpHex, cpRGB, cpHSL, cpCMYK, cpOKLCH, cpEscBG, cpEscFG}
 	return keybinds{
 		next: key.NewBinding(
 			key.WithKeys("tab"),

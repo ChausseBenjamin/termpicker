@@ -25,6 +25,9 @@ func (m Model) copyColor(format string) tea.Cmd {
 	case cpCMYK:
 		cmyk := colors.CMYK{}.FromPrecise(pc).(colors.CMYK)
 		colorStr = cmyk.String()
+	case cpOKLCH:
+		oklch := colors.OKLCH{}.FromPrecise(pc).(colors.OKLCH)
+		colorStr = oklch.String()
 	case cpEscFG:
 		colorStr = colors.EscapedSeq(m.pickers[m.active].GetColor(), true)
 	case cpEscBG:
@@ -58,6 +61,9 @@ func (m *Model) SetColorFromText(colorStr string) string {
 		case colors.HSL:
 			m.UpdatePicker(IndexHsl, pc)
 			m.SetActive(IndexHsl)
+		case colors.OKLCH:
+			m.UpdatePicker(IndexOklch, pc)
+			m.SetActive(IndexOklch)
 		}
 		return "Color set to " + colorStr
 	}

@@ -70,6 +70,12 @@ func (m Model) GetColor() colors.ColorSpace {
 			S: m.sliders[1].Val(),
 			L: m.sliders[2].Val(),
 		}
+	case "OKLCH":
+		return colors.OKLCH{
+			L: float64(m.sliders[0].Val()) / 1000.0, // Scale back from 0-1000 to 0-1
+			C: float64(m.sliders[1].Val()) / 1000.0, // Scale back from 0-500 to 0-0.5
+			H: float64(m.sliders[2].Val()),          // Use as-is 0-360
+		}
 	default: // Default to white if we don't know the color space
 		return colors.RGB{
 			R: 255,
@@ -98,6 +104,11 @@ func (m Model) SetColor(c colors.ColorSpace) {
 		m.sliders[0].Set(hsl.H)
 		m.sliders[1].Set(hsl.S)
 		m.sliders[2].Set(hsl.L)
+	case "OKLCH":
+		oklch := colors.OKLCH{}.FromPrecise(p).(colors.OKLCH)
+		m.sliders[0].Set(int(oklch.L * 1000.0)) // Scale 0-1 to 0-1000
+		m.sliders[1].Set(int(oklch.C * 1000.0)) // Scale 0-0.5 to 0-500
+		m.sliders[2].Set(int(oklch.H))          // Use as-is 0-360
 	}
 }
 

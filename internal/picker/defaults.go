@@ -32,3 +32,12 @@ func HSL() *Model {
 			slider.New('L', 100, ui.Style().Sliders.L...),
 		}, "HSL")
 }
+
+func OKLCH() *Model {
+	return New(
+		[]slider.Model{
+			slider.New('L', 1000, ui.Style().Sliders.OL...), // 0-1 scaled to 0-1000
+			slider.New('C', 500, ui.Style().Sliders.OC...),  // 0-0.5 scaled to 0-500
+			slider.New('H', 360, ui.Style().Sliders.OH...),  // 0-360 as-is
+		}, "OKLCH")
+}

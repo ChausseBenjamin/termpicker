@@ -29,6 +29,7 @@ type sliderOpts struct {
 	R, G, B    []progress.Option
 	C, M, Y, K []progress.Option
 	H, S, L    []progress.Option
+	OL, OC, OH []progress.Option // OKLCH
 }
 
 type StyleSheet struct {
@@ -117,6 +118,11 @@ func init() {
 			H: append(baseSliderOpts, progress.WithDefaultGradient()),
 			S: append(baseSliderOpts, progress.WithGradient("#a68e59", "#ffae00")),
 			L: append(baseSliderOpts, progress.WithGradient("#222222", "#ffffff")),
+
+			// OKLCH
+			OL: append(baseSliderOpts, progress.WithGradient("#000000", "#ffffff")), // Lightness: black to white
+			OC: append(baseSliderOpts, progress.WithGradient("#808080", "#ff6600")), // Chroma: gray to vibrant
+			OH: append(baseSliderOpts, progress.WithDefaultGradient()),              // Hue: rainbow
 		},
 	}
 }

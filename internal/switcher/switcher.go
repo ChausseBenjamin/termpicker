@@ -23,6 +23,7 @@ import (
 const (
 	IndexRgb int = iota
 	IndexHsl
+	IndexOklch
 	IndexCmyk
 )
 
@@ -40,6 +41,7 @@ func New() Model {
 	pickers := []picker.Model{ // Order MUST match the Index* constants
 		*picker.RGB(),
 		*picker.HSL(),
+		*picker.OKLCH(),
 		*picker.CMYK(),
 	}
 
