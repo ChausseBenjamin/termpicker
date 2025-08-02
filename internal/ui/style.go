@@ -114,8 +114,8 @@ func init() {
 			K: append(baseSliderOpts, progress.WithSolidFill(lg.Color("#000000"))),
 
 			// HSL
-			H: append(baseSliderOpts, progress.WithDefaultGradient()),
-			S: append(baseSliderOpts, progress.WithGradient("#a68e59", "#ffae00")),
+			H: append(baseSliderOpts, progress.WithDefaultHueGradient()),
+			S: append(baseSliderOpts, progress.WithStretchedGradient("#808080", "#ffae00")),
 			L: append(baseSliderOpts, progress.WithGradient("#222222", "#ffffff")),
 		},
 	}
