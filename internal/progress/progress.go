@@ -119,7 +119,7 @@ func WithHueGradient(saturation, lightness float64) Option {
 
 // WithDefaultHueGradient creates a hue gradient with default saturation and lightness.
 func WithDefaultHueGradient() Option {
-	return WithHueGradient(0.8, 0.6) // High saturation, medium lightness
+	return WithHueGradient(0.9, 0.5) // High saturation, medium lightness
 }
 
 // WithDefaultOKLCHHueGradient creates a hue gradient in OKLCH color space with default chroma and lightness.
