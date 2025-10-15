@@ -10,8 +10,11 @@ Set FontSize 18
 Set Margin 0
 Set BorderRadius 10
 
-Type "termpicker"
+Hide
+Type "./termpicker"
 Enter
+Show
+
 Sleep 250ms
 Type "jlllljjhhhhh"
 Sleep 1s
