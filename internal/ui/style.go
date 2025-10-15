@@ -120,9 +120,9 @@ func init() {
 			L: append(baseSliderOpts, progress.WithGradient("#222222", "#ffffff")),
 
 			// OKLCH
-			OL: append(baseSliderOpts, progress.WithGradient("#000000", "#ffffff")), // Lightness: black to white
-			OC: append(baseSliderOpts, progress.WithGradient("#808080", "#ff6600")), // Chroma: gray to vibrant
-			OH: append(baseSliderOpts, progress.WithDefaultGradient()),              // Hue: rainbow
+			OL: append(baseSliderOpts, progress.WithGradient("#000000", "#ffffff")),          // Lightness: black to white
+			OC: append(baseSliderOpts, progress.WithStretchedGradient("#4d7465", "#00a82c")), // Chroma: gray to vibrant
+			OH: append(baseSliderOpts, progress.WithDefaultOKLCHHueGradient()),               // Hue: rainbow
 		},
 	}
 }

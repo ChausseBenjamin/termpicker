@@ -12,6 +12,7 @@ import (
 	"sync/atomic"
 	"time"
 
+	"github.com/ChausseBenjamin/termpicker/internal/colors"
 	tea "github.com/charmbracelet/bubbletea/v2"
 	"github.com/charmbracelet/harmonica"
 	"github.com/charmbracelet/lipgloss/v2"
@@ -119,6 +120,11 @@ func WithHueGradient(saturation, lightness float64) Option {
 // WithDefaultHueGradient creates a hue gradient with default saturation and lightness.
 func WithDefaultHueGradient() Option {
 	return WithHueGradient(0.8, 0.6) // High saturation, medium lightness
+}
+
+// WithDefaultOKLCHHueGradient creates a hue gradient in OKLCH color space with default chroma and lightness.
+func WithDefaultOKLCHHueGradient() Option {
+	return WithGradientFunc(createOKLCHHueGradient(0.3, 0.6)) // Moderate chroma, medium lightness
 }
 
 // WithSolidFill sets the progress to use a solid fill with the given color.
@@ -507,6 +513,29 @@ func createHueGradient(saturation, lightness float64) ProgressFillFunc {
 		// Create HSL color and convert to RGB
 		hslColor := colorful.Hsl(hue, sat, light)
 		return hslColor
+	}
+}
+
+// createOKLCHHueGradient creates a hue-based gradient in OKLCH color space.
+// 0% completion -> 0° hue, 100% completion -> 360° hue
+func createOKLCHHueGradient(chroma, lightness float64) ProgressFillFunc {
+	// Clamp chroma and lightness to valid ranges
+	c := math.Max(0, math.Min(0.5, chroma))
+	l := math.Max(0, math.Min(1, lightness))
+
+	return func(totalCompletion, current float64) color.Color {
+		// Map current position to hue angle (0-360 degrees)
+		hue := current * 360.0
+
+		// Create OKLCH color and convert to RGB
+		oklch := colors.OKLCH{L: l, C: c, H: hue}
+		precise := oklch.ToPrecise()
+		return color.RGBA{
+			R: uint8(math.Round(precise.R * 255)),
+			G: uint8(math.Round(precise.G * 255)),
+			B: uint8(math.Round(precise.B * 255)),
+			A: 255,
+		}
 	}
 }
 
