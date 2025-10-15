@@ -30,7 +30,7 @@ var AppFlags []cli.Flag = []cli.Flag{
 		Usage:   "Text to preview colors as a foreground/background (setting this to an empty string \"\" will disable this feature)",
 		Sources: cli.EnvVars("TERMPICKER_PREVIEW_STRING"),
 		Aliases: []string{"t"},
-		Value:   "The quick brown fox jump over the lazy dog",
+		Value:   "The quick brown fox jumps over the lazy dog",
 	},
 	&cli.StringFlag{
 		Name:        flagSampleBG,
