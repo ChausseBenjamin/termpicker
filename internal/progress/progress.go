@@ -19,10 +19,11 @@ import (
 	"github.com/lucasb-eyer/go-colorful"
 )
 
-// GradientFunc defines a function that returns a color based on completion percentages.
+// ProgressFillFunc defines a function that returns which color
+// to use for a given *current* part of the progress bar.
 // totalCompletion: Overall completion of the progress bar (0.0 to 1.0)
 // current: Position within the progress bar where the color is needed (0.0 to 1.0)
-type GradientFunc func(totalCompletion, current float64) color.Color
+type ProgressFillFunc func(totalCompletion, current float64) color.Color
 
 // Internal ID management. Used during animating to assure that frame messages
 // can only be received by progress components that sent them.
@@ -91,7 +92,7 @@ func WithScaledGradient(colorA, colorB string) Option {
 }
 
 // WithGradientFunc sets a custom gradient function for the progress bar.
-func WithGradientFunc(gradientFunc GradientFunc) Option {
+func WithGradientFunc(gradientFunc ProgressFillFunc) Option {
 	return func(m *Model) {
 		m.gradientFunc = gradientFunc
 		m.useGradientFunc = true
@@ -225,7 +226,7 @@ type Model struct {
 
 	// New gradient function
 	useGradientFunc bool
-	gradientFunc    GradientFunc
+	gradientFunc    ProgressFillFunc
 
 	// When true, we scale the gradient to fit the width of the filled section
 	// of the progress bar. When false, the width of the gradient will be set
@@ -379,22 +380,58 @@ func (m Model) barView(b *strings.Builder, percent float64, textWidth int) {
 			// Filled cell: calculate the closest FillStep
 			step := interpolateFillStep(m.FillSteps, fw-float64(i))
 
-			// Use new gradient function interface
-			if m.useGradientFunc {
-				current := float64(i) / float64(tw)
-				c := m.gradientFunc(percent, current)
-				b.WriteString(lipgloss.NewStyle().Foreground(c).Render(string(step.rune)))
-			} else if m.useRamp {
-				// Legacy gradient support
-				p := float64(i) / float64(tw-1)
-				if m.scaleRamp {
-					p = float64(i) / float64(tw-1)
+			// For full blocks, use half-block technique for smoother gradients
+			if step.rune == '█' {
+				// Use half-block character with foreground and background colors
+				// for 2x resolution gradient effect
+				leftPos := float64(i) / float64(tw)
+				rightPos := float64(i) + 0.5
+				if rightPos < float64(tw) {
+					rightPos = rightPos / float64(tw)
+				} else {
+					rightPos = leftPos
 				}
-				c := m.rampColorA.BlendLuv(m.rampColorB, p)
-				b.WriteString(lipgloss.NewStyle().Foreground(c).Render(string(step.rune)))
+
+				var leftColor, rightColor color.Color
+				if m.useGradientFunc {
+					leftColor = m.gradientFunc(percent, leftPos)
+					rightColor = m.gradientFunc(percent, rightPos)
+				} else if m.useRamp {
+					// Legacy gradient support
+					p1 := leftPos
+					p2 := rightPos
+					if m.scaleRamp {
+						p1 = leftPos
+						p2 = rightPos
+					}
+					leftColor = m.rampColorA.BlendLuv(m.rampColorB, p1)
+					rightColor = m.rampColorA.BlendLuv(m.rampColorB, p2)
+				} else {
+					// Legacy solid color support
+					leftColor = m.FullColor
+					rightColor = m.FullColor
+				}
+
+				// Use half-block character: foreground = left half, background = right half
+				b.WriteString(lipgloss.NewStyle().Foreground(leftColor).Background(rightColor).Render("▌"))
 			} else {
-				// Legacy solid color support
-				b.WriteString(lipgloss.NewStyle().Foreground(m.FullColor).Render(string(step.rune)))
+				// For edge blocks (using the eights), keep original logic
+				if m.useGradientFunc {
+					current := float64(i) / float64(tw)
+					c := m.gradientFunc(percent, current)
+					b.WriteString(lipgloss.NewStyle().Foreground(c).Render(string(step.rune)))
+				} else if m.useRamp {
+					// Legacy gradient support
+					p := float64(i) / float64(tw-1)
+					if m.scaleRamp {
+						p = float64(i) / float64(tw-1)
+					}
+					c := m.rampColorA.BlendLuv(m.rampColorB, p)
+					b.WriteString(lipgloss.NewStyle().Foreground(c).Render(string(step.rune)))
+				} else {
+					// Legacy solid color support
+					b.WriteString(lipgloss.NewStyle().Foreground(m.FullColor).Render(string(step.rune)))
+				}
 			}
 		} else {
 			// Empty cell - always use static color, no gradient
@@ -415,7 +452,7 @@ func interpolateFillStep(steps []FillStep, remaining float64) FillStep {
 }
 
 // createLinearGradient creates a linear gradient function between two colors.
-func createLinearGradient(colorA, colorB string, scaled bool) GradientFunc {
+func createLinearGradient(colorA, colorB string, scaled bool) ProgressFillFunc {
 	a, _ := colorful.Hex(colorA)
 	b, _ := colorful.Hex(colorB)
 
@@ -439,7 +476,7 @@ func createLinearGradient(colorA, colorB string, scaled bool) GradientFunc {
 
 // createStretchedLinearGradient creates a linear gradient where colorB is reached at totalCompletion.
 // The gradient stretches with progress - when bar is 30% full, colorB is at the 30% mark.
-func createStretchedLinearGradient(colorA, colorB string) GradientFunc {
+func createStretchedLinearGradient(colorA, colorB string) ProgressFillFunc {
 	a, _ := colorful.Hex(colorA)
 	b, _ := colorful.Hex(colorB)
 
@@ -458,7 +495,7 @@ func createStretchedLinearGradient(colorA, colorB string) GradientFunc {
 
 // createHueGradient creates a hue-based gradient where colors cycle through the hue wheel.
 // 0% completion -> 0° hue, 100% completion -> 360° hue
-func createHueGradient(saturation, lightness float64) GradientFunc {
+func createHueGradient(saturation, lightness float64) ProgressFillFunc {
 	// Clamp saturation and lightness to valid ranges
 	sat := math.Max(0, math.Min(1, saturation))
 	light := math.Max(0, math.Min(1, lightness))
@@ -474,10 +511,53 @@ func createHueGradient(saturation, lightness float64) GradientFunc {
 }
 
 // createSolidGradient creates a gradient function that always returns the same color.
-func createSolidGradient(c color.Color) GradientFunc {
+func createSolidGradient(c color.Color) ProgressFillFunc {
 	return func(totalCompletion, current float64) color.Color {
 		return c
 	}
+}
+
+// CreateStripedLuminanceGradient creates a moving striped progress bar using HSL luminance variations.
+// The stripes move as the progress advances, creating an animated effect.
+// hue: base hue (0-360), saturation: base saturation (0-1), stripeWidth: width of each stripe (0-1)
+func CreateStripedLuminanceGradient(hue, saturation, stripeWidth float64) ProgressFillFunc {
+	// Clamp parameters to valid ranges
+	h := math.Mod(hue, 360)
+	if h < 0 {
+		h += 360
+	}
+	sat := math.Max(0, math.Min(1, saturation))
+	width := math.Max(0.01, math.Min(1, stripeWidth)) // Minimum stripe width to avoid division by zero
+
+	return func(totalCompletion, current float64) color.Color {
+		// Create moving stripe pattern based on current position and total completion
+		// The totalCompletion acts as the "x offset" making stripes appear to move
+		stripePosition := (current - totalCompletion) / width
+
+		// Use modulo to create repeating pattern (0 to 1)
+		stripe := math.Mod(stripePosition, 1.0)
+
+		// Create luminance variation: oscillate between 0.2 and 0.8
+		// Using sine wave for smooth transitions
+		luminance := 0.5 + 0.3*math.Sin(stripe*2*math.Pi)
+
+		// Clamp luminance to valid range
+		luminance = math.Max(0.1, math.Min(0.9, luminance))
+
+		// Create HSL color and return
+		return colorful.Hsl(h, sat, luminance)
+	}
+}
+
+// WithStripedLuminanceGradient creates a moving striped progress bar option.
+// As progress advances, the stripes appear to move, creating a dynamic visual effect.
+func WithStripedLuminanceGradient(hue, saturation, stripeWidth float64) Option {
+	return WithGradientFunc(CreateStripedLuminanceGradient(hue, saturation, stripeWidth))
+}
+
+// WithDefaultStripedLuminanceGradient creates a striped gradient with default blue hue and moderate stripe width.
+func WithDefaultStripedLuminanceGradient() Option {
+	return WithStripedLuminanceGradient(240, 0.8, 0.1) // Blue hue, high saturation, narrow stripes
 }
 
 func (m Model) percentageView(percent float64) string {
