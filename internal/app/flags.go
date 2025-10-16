@@ -8,6 +8,7 @@ const (
 	flagSampleStr = "sample-text"
 	flagSampleBG  = "background-sample"
 	flagSampleFG  = "foreground-sample"
+	flagOneshot   = "oneshot"
 )
 
 var AppFlags []cli.Flag = []cli.Flag{
@@ -45,6 +46,11 @@ var AppFlags []cli.Flag = []cli.Flag{
 		Usage:       "Color used for foreground/text when previewing target color as a background (requires `sample-text` to be set)",
 		DefaultText: "#ebcb88",
 		Value:       "",
+	},
+	&cli.BoolFlag{
+		Name:    flagOneshot,
+		Usage:   "Print the copied color to stdout and exit",
+		Aliases: []string{"1"},
 	},
 	cli.VersionFlag,
 }

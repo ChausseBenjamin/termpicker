@@ -35,9 +35,10 @@ type Model struct {
 	input    textinput.Model
 	notice   notices.Model
 	fullHelp bool // When false, only show help for the switcher (not children)
+	oneshot  bool
 }
 
-func New() Model {
+func New(oneshot bool) Model {
 	pickers := []picker.Model{ // Order MUST match the Index* constants
 		*picker.RGB(),
 		*picker.HSL(),
@@ -57,6 +58,7 @@ func New() Model {
 		input:    input,
 		notice:   notices.New(),
 		fullHelp: false,
+		oneshot:  oneshot,
 	}
 }
 
@@ -225,8 +227,39 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.pickers[m.active].SetColor(cs)
 
 		case key.Matches(msg, keys.copy):
-			cmd := m.copyColor(msg.String())
-			cmds = append(cmds, cmd)
+			if m.oneshot {
+				pc := m.pickers[m.active].GetColor().ToPrecise()
+				var colorStr string
+
+				switch msg.String() {
+				case cpHex:
+					colorStr = colors.Hex(m.pickers[m.active].GetColor())
+				case cpRGB:
+					rgb := colors.RGB{}.FromPrecise(pc).(colors.RGB)
+					colorStr = rgb.String()
+				case cpHSL:
+					hsl := colors.HSL{}.FromPrecise(pc).(colors.HSL)
+					colorStr = hsl.String()
+				case cpCMYK:
+					cmyk := colors.CMYK{}.FromPrecise(pc).(colors.CMYK)
+					colorStr = cmyk.String()
+				case cpOKLCH:
+					oklch := colors.OKLCH{}.FromPrecise(pc).(colors.OKLCH)
+					colorStr = oklch.String()
+				case cpEscFG:
+					colorStr = colors.EscapedSeq(m.pickers[m.active].GetColor(), true)
+				case cpEscBG:
+					colorStr = colors.EscapedSeq(m.pickers[m.active].GetColor(), false)
+				default:
+					return m, nil
+				}
+
+				fmt.Println(colorStr)
+				return quit.Model{}, tea.Quit
+			} else {
+				cmd := m.copyColor(msg.String())
+				cmds = append(cmds, cmd)
+			}
 
 		case key.Matches(msg, keys.help):
 			m.fullHelp = !m.fullHelp

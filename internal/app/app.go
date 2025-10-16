@@ -26,7 +26,7 @@ func AppAction(ctx context.Context, cmd *cli.Command) error {
 
 	slog.Info("Starting Termpicker")
 
-	sw := switcher.New()
+	sw := switcher.New(cmd.Bool(flagOneshot))
 
 	if colorStr := cmd.String(flagColor); colorStr != "" {
 		sw.NewNotice(sw.SetColorFromText(colorStr))
@@ -56,6 +56,7 @@ func AppAction(ctx context.Context, cmd *cli.Command) error {
 	p := tea.NewProgram(sw,
 		tea.WithAltScreen(),
 		tea.WithColorProfile(colorprofile.TrueColor),
+		tea.WithOutput(os.Stderr),
 	)
 	if _, err := p.Run(); err != nil {
 		return err
