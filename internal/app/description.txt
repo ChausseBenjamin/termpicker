@@ -21,3 +21,4 @@ Insert mode:
 	- RGB:   rgb(r, g, b)
 	- CMYK:  cmyk(c, m, y, k)
 	- HSL:   hsl(h, s, l)
+	- OKLCH: oklch(l c h)
