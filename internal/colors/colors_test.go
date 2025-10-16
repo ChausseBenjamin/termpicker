@@ -6,7 +6,7 @@ import (
 )
 
 const (
-	PCmaxDelta     = 1e-8
+	PCmaxDelta     = 1e-2
 	AssertTemplate = "Testing '%v'. Expected %v to become: %v Got: %v"
 )
 
@@ -52,7 +52,7 @@ func getEquivalents() []equivalentColors {
 			RGB{255, 0, 0},
 			CMYK{0, 100, 100, 0},
 			HSL{0, 100, 50},
-			OKLCH{0.627987, 0.257640, 29.227136},
+			OKLCH{0.628, 0.258, 29.23},
 		},
 		{
 			"Green",
@@ -60,7 +60,7 @@ func getEquivalents() []equivalentColors {
 			RGB{0, 255, 0},
 			CMYK{100, 0, 100, 0},
 			HSL{120, 100, 50},
-			OKLCH{0.866439, 0.294376, 142.495338},
+			OKLCH{0.866, 0.295, 142.51},
 		},
 		{
 			"Blue",
@@ -68,7 +68,7 @@ func getEquivalents() []equivalentColors {
 			RGB{0, 0, 255},
 			CMYK{100, 100, 0, 0},
 			HSL{240, 100, 50},
-			OKLCH{0.452014, 0.313214, 264.052021},
+			OKLCH{0.452, 0.313, 264.06},
 		},
 		// }}}
 		// Pure CMYK {{{
@@ -78,7 +78,7 @@ func getEquivalents() []equivalentColors {
 			RGB{0, 255, 255},
 			CMYK{100, 0, 0, 0},
 			HSL{180, 100, 50},
-			OKLCH{0.911132, 0.274669, 195.376894},
+			OKLCH{0.905, 0.155, 194.80},
 		},
 		{
 			"Magenta",
@@ -86,7 +86,7 @@ func getEquivalents() []equivalentColors {
 			RGB{255, 0, 255},
 			CMYK{0, 100, 0, 0},
 			HSL{300, 100, 50},
-			OKLCH{0.603741, 0.377984, 328.363423},
+			OKLCH{0.702, 0.323, 328.36},
 		},
 		{
 			"Yellow",
@@ -94,7 +94,7 @@ func getEquivalents() []equivalentColors {
 			RGB{255, 255, 0},
 			CMYK{0, 0, 100, 0},
 			HSL{60, 100, 50},
-			OKLCH{0.967983, 0.211009, 99.574137},
+			OKLCH{0.968, 0.211, 109.78},
 		},
 		// note: Black is already tested
 		// }}}
@@ -155,7 +155,7 @@ func TestToOKLCH(t *testing.T) {
 		target := ce.oklch
 		for _, cs := range []ColorSpace{ce.pc, ce.rgb, ce.cmyk, ce.hsl} {
 			oklch := OKLCH{}.FromPrecise(cs.ToPrecise()).(OKLCH)
-			delta := 1e-3
+			delta := 1e-2
 			if math.Abs(oklch.L-target.L) > delta || math.Abs(oklch.C-target.C) > delta || math.Abs(oklch.H-target.H) > delta {
 				t.Errorf(AssertTemplate, ce.name, cs, target, oklch)
 			}

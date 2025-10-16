@@ -83,9 +83,12 @@ func (o OKLCH) FromPrecise(p PreciseColor) ColorSpace {
 
 	// Convert Oklab to OKLCH
 	chroma := math.Sqrt(a*a + b*b)
-	hue := math.Atan2(b, a) * 180.0 / math.Pi
-	if hue < 0 {
-		hue += 360
+	hue := 0.0
+	if chroma >= 1e-4 {
+		hue = math.Atan2(b, a) * 180.0 / math.Pi
+		if hue < 0 {
+			hue += 360
+		}
 	}
 
 	return OKLCH{

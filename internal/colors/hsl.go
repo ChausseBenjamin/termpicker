@@ -73,7 +73,7 @@ func (h HSL) FromPrecise(p PreciseColor) ColorSpace {
 	light := (max + min) / 2
 	var sat, hue float64
 
-	if delta == 0 {
+	if delta < 1e-4 {
 		// Achromatic case
 		hue, sat = 0, 0
 	} else {
