@@ -35,7 +35,7 @@ Termpicker is on the AUR! :tada: Just install it with you favourite
 aur package manager (yay, paru, yaourt, etc...)
 
 ```sh
-yay -S termpicker
+yay -S termpicker-bin
 ```
 
 **Manual Installation**:
