@@ -6,7 +6,7 @@ import (
 	"github.com/ChausseBenjamin/termpicker/internal/colors"
 	"github.com/ChausseBenjamin/termpicker/internal/parse"
 	"github.com/ChausseBenjamin/termpicker/internal/util"
-	tea "github.com/charmbracelet/bubbletea/v2"
+	tea "charm.land/bubbletea/v2"
 )
 
 func (m Model) copyColor(format string) tea.Cmd {

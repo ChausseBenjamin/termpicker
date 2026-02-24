@@ -5,8 +5,8 @@ import (
 	"strings"
 	"time"
 
+	tea "charm.land/bubbletea/v2"
 	"github.com/ChausseBenjamin/termpicker/internal/util"
-	tea "github.com/charmbracelet/bubbletea/v2"
 	"github.com/hashicorp/go-uuid"
 )
 
@@ -23,12 +23,12 @@ type Model struct {
 
 func (m Model) Init() tea.Cmd { return nil }
 
-func (m Model) View() string {
+func (m Model) View() tea.View {
 	noticeStr := ""
 	for _, v := range m.Notices {
 		noticeStr += v + "\n"
 	}
-	return strings.TrimRight(noticeStr, "\n")
+	return tea.NewView(strings.TrimRight(noticeStr, "\n"))
 }
 
 func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {

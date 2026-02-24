@@ -3,7 +3,7 @@ package switcher
 import (
 	"strings"
 
-	"github.com/charmbracelet/bubbles/v2/key"
+	"charm.land/bubbles/v2/key"
 )
 
 const (

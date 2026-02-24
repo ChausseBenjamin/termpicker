@@ -4,10 +4,10 @@ import (
 	"log/slog"
 	"strings"
 
+	tea "charm.land/bubbletea/v2"
+	"charm.land/lipgloss/v2"
 	"github.com/ChausseBenjamin/termpicker/internal/colors"
 	"github.com/ChausseBenjamin/termpicker/internal/util"
-	tea "github.com/charmbracelet/bubbletea/v2"
-	"github.com/charmbracelet/lipgloss/v2"
 )
 
 const (
@@ -74,7 +74,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	return m, nil
 }
 
-func (m Model) View() string {
+func (m Model) View() tea.View {
 	normStyle := lipgloss.NewStyle().
 		Background(lipgloss.Color(m.hex)).
 		Foreground(lipgloss.Color(m.cfg.PreviewFg)).
@@ -99,5 +99,5 @@ func (m Model) View() string {
 
 	oneRow := strings.Repeat(runeBlock, m.width) + "\n"
 	block := prevRows + normStyle.Render(strings.Repeat(oneRow, m.height-buffer))
-	return block
+	return tea.NewView(block)
 }

@@ -5,6 +5,11 @@ import (
 	"log/slog"
 	"strings"
 
+	"charm.land/bubbles/v2/help"
+	"charm.land/bubbles/v2/key"
+	"charm.land/bubbles/v2/textinput"
+	tea "charm.land/bubbletea/v2"
+	lg "charm.land/lipgloss/v2"
 	"github.com/ChausseBenjamin/termpicker/internal/colors"
 	"github.com/ChausseBenjamin/termpicker/internal/notices"
 	"github.com/ChausseBenjamin/termpicker/internal/picker"
@@ -13,11 +18,6 @@ import (
 	"github.com/ChausseBenjamin/termpicker/internal/toosmall"
 	"github.com/ChausseBenjamin/termpicker/internal/ui"
 	"github.com/ChausseBenjamin/termpicker/internal/util"
-	"github.com/charmbracelet/bubbles/v2/help"
-	"github.com/charmbracelet/bubbles/v2/key"
-	"github.com/charmbracelet/bubbles/v2/textinput"
-	tea "github.com/charmbracelet/bubbletea/v2"
-	lg "github.com/charmbracelet/lipgloss/v2"
 )
 
 const (
@@ -110,7 +110,7 @@ func (m Model) Init() tea.Cmd {
 	return tea.Batch(cmds...)
 }
 
-func (m Model) View() string {
+func (m Model) View() tea.View {
 	tabs := make([]string, len(m.pickers))
 	for i, p := range m.pickers {
 		if i == m.active {
@@ -125,16 +125,16 @@ func (m Model) View() string {
 		ui.Style().TabGeom.Render(ui.TabSepRight),
 	}, " ")
 
-	pickerStr := m.pickers[m.active].View()
+	pickerStr := m.pickers[m.active].View().Content
 	w := lg.Width(pickerStr)
 
 	m.prev.SetWidth(w)
-	previewStr := m.prev.View()
+	previewStr := m.prev.View().Content
 
 	m.help.Styles.ShortKey.Width(w)
 
 	var helpStr string
-	m.help.Width = w
+	m.help.SetWidth(w)
 	if m.fullHelp {
 		helpStr = m.help.FullHelpView(m.AllKeys())
 	} else {
@@ -157,17 +157,20 @@ func (m Model) View() string {
 		helpStr,
 	}, "\n"))
 
-	return strings.Join(
+	view := tea.NewView(strings.Join(
 		[]string{
 			tabStr,
 			mainArea,
 			inputStr,
-			m.notice.View(),
-		}, "\n")
+			m.notice.View().Content,
+		}, "\n"))
+	view.AltScreen = true
+	return view
 }
 
 func (m Model) Fits(s tea.WindowSizeMsg) bool {
-	return s.Width >= lg.Width(m.View()) && s.Height >= lg.Height(m.View())
+	view := m.View()
+	return s.Width >= lg.Width(view.Content) && s.Height >= lg.Height(view.Content)
 }
 
 func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
@@ -247,10 +250,6 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			cmds = append(cmds, cmd)
 			return m, tea.Batch(cmds...)
 		}
-
-	case tea.TerminalVersionMsg:
-		// Handle terminal version for clipboard decisions
-		util.HandleTerminalVersion(string(msg))
 
 	case util.ClipboardResultMsg:
 		// Handle clipboard operation results

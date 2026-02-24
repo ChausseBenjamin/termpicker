@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"strings"
 
+	tea "charm.land/bubbletea/v2"
+	lg "charm.land/lipgloss/v2"
 	"github.com/ChausseBenjamin/termpicker/internal/ui"
-	tea "github.com/charmbracelet/bubbletea/v2"
-	lg "github.com/charmbracelet/lipgloss/v2"
 )
 
 type Model struct {
@@ -22,19 +22,19 @@ func (m Model) Init() tea.Cmd {
 	return nil
 }
 
-func (m Model) View() string {
-	return ui.Style().Notice.Align(lg.Center).
+func (m Model) View() tea.View {
+	return tea.NewView(ui.Style().Notice.Align(lg.Center).
 		Faint(false).Foreground(lg.Color("#e06060")).Bold(true).
 		Render(
 			fmt.Sprintf("%s\nTerminal too small!\nPlease resize...",
 				strings.Repeat(" ", m.w),
 			),
-		)
+		))
 }
 
 func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
-	case tea.KeyMsg:
+	case tea.KeyPressMsg:
 		switch msg.String() {
 		case "ctrl+c", "q":
 			return m, tea.Quit
@@ -52,17 +52,13 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (m Model) parentWidth() int {
-	// In v2, we need to handle the ViewModel interface
-	if vm, ok := m.parent.(tea.ViewModel); ok {
-		return lg.Width(vm.View())
-	}
-	return 0
+	// In v2, we get the view directly from the model
+	view := m.parent.View()
+	return lg.Width(view.Content)
 }
 
 func (m Model) parentHeight() int {
-	// In v2, we need to handle the ViewModel interface
-	if vm, ok := m.parent.(tea.ViewModel); ok {
-		return lg.Height(vm.View())
-	}
-	return 0
+	// In v2, we get the view directly from the model
+	view := m.parent.View()
+	return lg.Height(view.Content)
 }

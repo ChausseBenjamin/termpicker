@@ -2,7 +2,7 @@ package ui
 
 import (
 	"github.com/ChausseBenjamin/termpicker/internal/progress"
-	lg "github.com/charmbracelet/lipgloss/v2"
+	lg "charm.land/lipgloss/v2"
 )
 
 const (

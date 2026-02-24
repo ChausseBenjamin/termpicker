@@ -7,8 +7,8 @@ import (
 	"runtime"
 	"strings"
 
+	tea "charm.land/bubbletea/v2"
 	"github.com/atotto/clipboard"
-	tea "github.com/charmbracelet/bubbletea/v2"
 )
 
 // ClipboardManager holds pre-computed clipboard strategy information
@@ -32,10 +32,12 @@ type ClipboardResult struct {
 // ClipboardResultMsg is sent when clipboard operations complete
 type ClipboardResultMsg ClipboardResult
 
-// InitClipboard should be called early in the application to query terminal version
+// InitClipboard initializes the clipboard manager
 func InitClipboard() tea.Cmd {
 	return func() tea.Msg {
-		return tea.TerminalVersion()
+		// Initialize with empty version string for now
+		HandleTerminalVersion("")
+		return nil
 	}
 }
 

@@ -12,10 +12,10 @@ import (
 	"sync/atomic"
 	"time"
 
+	tea "charm.land/bubbletea/v2"
+	"charm.land/lipgloss/v2"
 	"github.com/ChausseBenjamin/termpicker/internal/colors"
-	tea "github.com/charmbracelet/bubbletea/v2"
 	"github.com/charmbracelet/harmonica"
-	"github.com/charmbracelet/lipgloss/v2"
 	"github.com/charmbracelet/x/ansi"
 	"github.com/lucasb-eyer/go-colorful"
 )
@@ -345,17 +345,17 @@ func (m *Model) DecrPercent(v float64) tea.Cmd {
 
 // View renders an animated progress bar in its current state. To render
 // a static progress bar based on your own calculations use ViewAs instead.
-func (m Model) View() string {
+func (m Model) View() tea.View {
 	return m.ViewAs(m.percentShown)
 }
 
 // ViewAs renders the progress bar with a given percentage.
-func (m Model) ViewAs(percent float64) string {
+func (m Model) ViewAs(percent float64) tea.View {
 	b := strings.Builder{}
 	percentView := m.percentageView(percent)
 	m.barView(&b, percent, ansi.StringWidth(percentView))
 	b.WriteString(percentView)
-	return b.String()
+	return tea.NewView(b.String())
 }
 
 // SetWidth sets the width of the progress bar.

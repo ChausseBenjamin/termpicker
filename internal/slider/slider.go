@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"strings"
 
+	"charm.land/bubbles/v2/key"
+	tea "charm.land/bubbletea/v2"
 	"github.com/ChausseBenjamin/termpicker/internal/progress"
 	"github.com/ChausseBenjamin/termpicker/internal/ui"
-	"github.com/charmbracelet/bubbles/v2/key"
-	tea "github.com/charmbracelet/bubbletea/v2"
 )
 
 type Model struct {
@@ -78,10 +78,10 @@ func (m Model) ViewValue(current int) string {
 	return fmt.Sprintf("(%3d/%d)", current, m.max)
 }
 
-func (m Model) View() string {
-	return strings.Join([]string{
+func (m Model) View() tea.View {
+	return tea.NewView(strings.Join([]string{
 		ui.Style().SliderLabel.Render(m.Title()),
-		m.progress.View(),
+		m.progress.View().Content,
 		ui.Style().SliderVal.Render(m.ViewValue(m.current)),
-	}, " ")
+	}, " "))
 }

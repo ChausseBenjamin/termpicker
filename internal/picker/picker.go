@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"strings"
 
+	"charm.land/bubbles/v2/key"
+	tea "charm.land/bubbletea/v2"
 	"github.com/ChausseBenjamin/termpicker/internal/colors"
 	"github.com/ChausseBenjamin/termpicker/internal/slider"
 	"github.com/ChausseBenjamin/termpicker/internal/ui"
-	"github.com/charmbracelet/bubbles/v2/key"
-	tea "github.com/charmbracelet/bubbletea/v2"
 )
 
 type Model struct {
@@ -124,20 +124,20 @@ func ViewSlider(active bool, s slider.Model) string {
 	if active {
 		return fmt.Sprintf("%s %s",
 			ui.Style().PickerCursor.Render(ui.PickerSelRune),
-			s.View(),
+			s.View().Content,
 		)
 	}
 	return fmt.Sprintf("  %s",
-		s.View(),
+		s.View().Content,
 	)
 }
 
-func (m Model) View() string {
+func (m Model) View() tea.View {
 	sliderList := make([]string, len(m.sliders))
 	for i, slider := range m.sliders {
 		sliderList[i] = ViewSlider(i == m.active, slider)
 	}
-	return strings.Join(sliderList, "\n")
+	return tea.NewView(strings.Join(sliderList, "\n"))
 }
 
 func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
