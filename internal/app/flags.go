@@ -4,6 +4,7 @@ import "github.com/urfave/cli/v3"
 
 const (
 	flagLogfile   = "log-file"
+	flagLogLevel  = "log-level"
 	flagColor     = "color"
 	flagSampleStr = "sample-text"
 	flagSampleBG  = "background-sample"
@@ -25,6 +26,13 @@ var AppFlags []cli.Flag = []cli.Flag{
 		Aliases:     []string{"l"},
 		Sources:     cli.EnvVars("TERMPICKER_LOG_FILE"),
 		DefaultText: "/path/to/termpicker-logs.txt",
+	},
+	&cli.StringFlag{
+		Name:        flagLogLevel,
+		Usage:       "Log level",
+		Value:       "",
+		DefaultText: "[debug, info, warn, error]",
+		Sources:     cli.EnvVars("TERMPICKER_LOG_LEVEL"),
 	},
 	&cli.StringFlag{
 		Name:    flagSampleStr,
