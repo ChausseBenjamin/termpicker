@@ -194,6 +194,13 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		cmds = append(cmds, cmd)
 		m.prev = newPreview.(preview.Model)
 
+	case tea.PasteMsg:
+		if m.input.Focused() {
+			model, cmd := m.input.Update(msg)
+			m.input = model
+			cmds = append(cmds, cmd)
+		}
+
 	case tea.KeyMsg:
 
 		if m.input.Focused() && msg.String() != "ctrl+c" {
