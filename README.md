@@ -13,6 +13,8 @@ Here is a quick demo of what has been done so far:
 - Create colors using sliders for RGB, HSL, and CMYK
 - Seamlessly convert between color formats (RGB, HSL, CMYK) as you create
 - Copy the color to your clipboard in various formats ([RGB][4], [HEX][5], [HSL][6], [CMYK][7], [ANSI truecolor][8])
+- Integrate into scripts by sending colors to standard output instead of
+  your clipboard using `--oneshot`
 
 ## Usage:
 
@@ -43,13 +45,6 @@ yay -S termpicker-bin
 Just grab the latest release for your platform and install the binary
 somewhere in your `PATH`. Releases also include a manpage which you can
 install to your `$XDG_DATA_HOME/man/man1/`.
-
-## Roadmap
-
-- [ ] Publish release to more mainstream repositories (Homebrew, nix, etc...)
-- [ ] Unit-test color conversions near edge case colors
-- [ ] Migrate to bubbletea/V2 once it comes out of beta
-- [X] Warn the user if the terminal is too small (and refuse to render)
 
 [1]: https://github.com/charmbracelet/lipgloss
 [2]: https://github.com/charmbracelet/soft-serve
