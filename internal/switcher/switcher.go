@@ -234,38 +234,14 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.pickers[m.active].SetColor(cs)
 
 		case key.Matches(msg, keys.copy):
+			colorStr, ok := m.formatColor(msg.String())
 			if m.oneshot {
-				pc := m.pickers[m.active].GetColor().ToPrecise()
-				var colorStr string
-
-				switch msg.String() {
-				case cpHex:
-					colorStr = colors.Hex(m.pickers[m.active].GetColor())
-				case cpRGB:
-					rgb := colors.RGB{}.FromPrecise(pc).(colors.RGB)
-					colorStr = rgb.String()
-				case cpHSL:
-					hsl := colors.HSL{}.FromPrecise(pc).(colors.HSL)
-					colorStr = hsl.String()
-				case cpCMYK:
-					cmyk := colors.CMYK{}.FromPrecise(pc).(colors.CMYK)
-					colorStr = cmyk.String()
-				case cpOKLCH:
-					oklch := colors.OKLCH{}.FromPrecise(pc).(colors.OKLCH)
-					colorStr = oklch.String()
-				case cpEscFG:
-					colorStr = colors.EscapedSeq(m.pickers[m.active].GetColor(), true)
-				case cpEscBG:
-					colorStr = colors.EscapedSeq(m.pickers[m.active].GetColor(), false)
-				default:
-					return m, nil
+				if !ok {
+					return quit.Fail(fmt.Sprintf("unsupported copy format %q", msg.String())), tea.Quit
 				}
-
-				fmt.Println(colorStr)
-				return quit.Model{}, tea.Quit
+				return quit.Ok(colorStr), tea.Quit
 			} else {
-				cmd := m.copyColor(msg.String())
-				cmds = append(cmds, cmd)
+				cmds = append(cmds, m.copyColor(msg.String()))
 			}
 
 		case key.Matches(msg, keys.help):
@@ -279,6 +255,9 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, tea.Suspend
 
 		case key.Matches(msg, keys.quit):
+			if m.oneshot {
+				return quit.Cancel(), tea.Quit
+			}
 			return quit.Model{}, tea.Quit
 
 		default: // Update the picker
@@ -295,17 +274,14 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case util.ClipboardResultMsg:
 		// Handle clipboard operation results
 		if msg.Success {
-			// Show success message
 			cmd := m.notice.New(msg.Message)
 			cmds = append(cmds, cmd)
 
-			// Show warning if fallback was used
 			if msg.UsedFallback {
 				warningCmd := m.notice.New(util.CopyWarningMessage(msg.FallbackReason))
 				cmds = append(cmds, warningCmd)
 			}
 		} else {
-			// Show error message
 			cmd := m.notice.New(msg.Message)
 			cmds = append(cmds, cmd)
 		}
@@ -317,7 +293,6 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.pickers[i] = newActive.(picker.Model)
 		cmds = append(cmds, cmd)
 	}
-	// Update the preview
 	newPreview, cmd := m.prev.Update(m.pickers[m.active].GetColor())
 	cmds = append(cmds, cmd)
 	m.prev = newPreview.(preview.Model)

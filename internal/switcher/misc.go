@@ -9,10 +9,9 @@ import (
 	tea "github.com/charmbracelet/bubbletea/v2"
 )
 
-func (m Model) copyColor(format string) tea.Cmd {
+func (m Model) formatColor(format string) (string, bool) {
 	pc := m.pickers[m.active].GetColor().ToPrecise()
 	var colorStr string
-
 	switch format {
 	case cpHex:
 		colorStr = colors.Hex(m.pickers[m.active].GetColor())
@@ -33,14 +32,20 @@ func (m Model) copyColor(format string) tea.Cmd {
 	case cpEscBG:
 		colorStr = colors.EscapedSeq(m.pickers[m.active].GetColor(), false)
 	default:
+		return "Copy format not supported", false
+	}
+	return colorStr, true
+}
+
+func (m Model) copyColor(format string) tea.Cmd {
+	colorStr, ok := m.formatColor(format)
+	if !ok {
 		return func() tea.Msg {
 			return util.ClipboardResultMsg{
-				Success: false,
-				Message: "Copy format not supported",
+				Success: false, Message: colorStr,
 			}
 		}
 	}
-
 	return util.SmartCopyToClipboard(colorStr)
 }
 
